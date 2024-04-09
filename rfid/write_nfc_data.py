@@ -1,26 +1,25 @@
 from pn532 import PN532_SPI
 import json
 
-def write_to_tag(pn532, data):
+def write_to_tag(pn532, uid, data):
     try:
-        # Configuration pour détecter le tag NFC
+        # Configuration pour communiquer avec les cartes MiFare
         pn532.SAM_configuration()
-
-        # Détection du tag NFC
-        uid = pn532.read_passive_target(timeout=0.5)
-        if uid is None:
-            print("Aucun tag NFC détecté.")
-            return
         
-        # Lecture du numéro de bloc à écrire
-        block_number = 4  # Modifier le numéro de bloc si nécessaire
+        # Définir le numéro de bloc à écrire
+        block_number = 6
 
-        # Écriture des données dans le tag NFC
+        # Authentifier le bloc avec la clé A par défaut
+        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=PN532.MIFARE_CMD_AUTH_A, key=[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+        
+        # Écrire les données dans le bloc
         pn532.mifare_classic_write_block(block_number, data)
 
         print("Données écrites avec succès dans le tag NFC.")
+        return True
     except Exception as e:
         print("Erreur lors de l'écriture dans le tag NFC :", e)
+        return False
 
 def get_data_from_user():
     # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
@@ -52,11 +51,34 @@ if __name__ == '__main__':
 
         print('Module NFC PN532 NFC HAT trouvé.')
 
-        # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
-        data_to_write = get_data_from_user()
+        while True:
+            print("Attente de la détection du tag NFC...")
+            # Configuration pour détecter le tag NFC
+            pn532.SAM_configuration()
 
-        # Appeler la fonction pour écrire dans le tag
-        write_to_tag(pn532, data_to_write)
+            # Détection du tag NFC
+            uid = pn532.read_passive_target(timeout=15)
+            if uid is None:
+                print("Aucun tag NFC détecté après 15 secondes.")
+                while True:
+                    choix = input("Voulez-vous réessayer ? (yes/no) : ")
+                    if choix.lower() == "yes":
+                        print("Réessayer la détection du tag NFC...")
+                        break
+                    elif choix.lower() == "no":
+                        print("Arrêt du programme.")
+                        exit()
+                    else:
+                        print("Choix invalide. Veuillez répondre par 'yes' ou 'no'.")
+            else:
+                print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
+                print("Permission d'écriture autorisée ...")
+                # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
+                data_to_write = get_data_from_user()
+
+                # Écrire dans le tag NFC
+                if write_to_tag(pn532, uid, data_to_write):
+                    break
                 
     except Exception as e:
         print(e)
