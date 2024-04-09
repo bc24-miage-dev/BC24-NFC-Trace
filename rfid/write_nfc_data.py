@@ -3,6 +3,7 @@ import json
 
 def write_to_tag(pn532, data):
     try:
+        print("Écriture des données dans le tag NFC...")
         # Configuration pour détecter le tag NFC
         pn532.SAM_configuration()
 
