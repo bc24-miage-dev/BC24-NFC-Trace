@@ -87,12 +87,15 @@ while running:
         data_string = data.hex()  # Convert bytes to hex string
         try:
             decoded_data = bytes.fromhex(data_string).decode('utf-8')  # Convert hex string to Unicode
+            # Filter out null characters
+            filtered_data = ''.join(char for char in decoded_data if char != '\x00')
         except UnicodeDecodeError:
-            decoded_data = "Unable to decode"  # In case of decoding error
-        label = FONT.render(decoded_data, True, (0, 0, 0))
+            filtered_data = "Unable to decode"  # In case of decoding error
+        label = FONT.render(filtered_data, True, (0, 0, 0))
         label_rect = label.get_rect()
         label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
         display.blit(label, label_rect)
+
 
     pygame.display.update()
 
