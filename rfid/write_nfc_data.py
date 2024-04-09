@@ -57,7 +57,7 @@ if __name__ == '__main__':
             pn532.SAM_configuration()
 
             # Détection du tag NFC
-            uid = pn532.read_passive_target(timeout=60)  # Attente de 60 secondes
+            uid = pn532.read_passive_target(timeout=0.5)  # Attente de 60 secondes
             if uid is None:
                 print("Aucun tag NFC détecté après 1 minute.")
                 while True:
@@ -71,6 +71,8 @@ if __name__ == '__main__':
                     else:
                         print("Choix invalide. Veuillez répondre par 'yes' ou 'no'.")
             else:
+                print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
+                print("Permission d'écriture autorisée ...")
                 # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
                 data_to_write = get_data_from_user()
 
