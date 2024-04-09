@@ -57,9 +57,9 @@ if __name__ == '__main__':
             pn532.SAM_configuration()
 
             # Détection du tag NFC
-            uid = pn532.read_passive_target(timeout=0.5)  # Attente de 60 secondes
+            uid = pn532.read_passive_target(timeout=15)
             if uid is None:
-                print("Aucun tag NFC détecté après 1 minute.")
+                print("Aucun tag NFC détecté après 15 secondes.")
                 while True:
                     choix = input("Voulez-vous réessayer ? (yes/no) : ")
                     if choix.lower() == "yes":
