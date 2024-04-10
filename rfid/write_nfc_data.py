@@ -1,3 +1,4 @@
+import pn532.pn532 as nfc
 from pn532 import PN532_SPI
 import json
 
