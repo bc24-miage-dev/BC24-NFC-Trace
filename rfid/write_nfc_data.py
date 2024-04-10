@@ -1,4 +1,4 @@
-from pn532 import PN532_SPI, PN532
+from pn532 import PN532_SPI
 import json
 
 def write_to_tag(pn532, uid, data):
@@ -11,7 +11,7 @@ def write_to_tag(pn532, uid, data):
         block_number = 6
 
         # Authentifier le bloc avec la clé A par défaut
-        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=PN532.MIFARE_CMD_AUTH_A, key=[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=pn532.MIFARE_CMD_AUTH_A, key=[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
         
         # Écrire les données dans le bloc
         pn532.mifare_classic_write_block(block_number, data)
