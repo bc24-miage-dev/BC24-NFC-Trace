@@ -18,13 +18,13 @@ def write_to_tag(pn532, uid, data):
 
         # Écrire les données dans le bloc
         print("Écriture des données dans le bloc...")
-        nfc.mifareclassic_write_block(uid, block_number, binascii.unhexlify(data_hex))
+        pn532.mifare_classic_write_block(uid, block_number, binascii.unhexlify(data_hex))
 
         print("Données écrites avec succès dans le tag NFC.")
         return True
     except Exception as e:
         print("Erreur lors de l'écriture dans le tag NFC :", e)
-        return False
+        exit()
 
 def get_data_from_user():
     # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
