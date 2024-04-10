@@ -19,17 +19,8 @@ def write_to_tag(pn532, uid, data):
         # Vérifier que chaque caractère de la chaîne hexadécimale est un caractère hexadécimal valide
         if all(c.isalnum() for c in data_hex):
 
-            # Convertir la chaîne hexadécimale en tableau d'octets
-            data_bytes = binascii.unhexlify(data_hex)
-
-            # Calculer la longueur du tableau d'octets
-            data_length = len(data_bytes)
-
-            # Ajouter des zéros à gauche du tableau d'octets jusqu'à ce qu'il ait une longueur de 16 octets
-            if data_length < 16:
-                padding_length = 16 - data_length
-                padding = b'\x00' * padding_length
-                data_bytes = padding + data_bytes
+            # Convertir la chaîne hexadécimale en tableau de bytes
+            data_hex = data_hex.zfill(32)
 
             # Écrire les données dans le bloc
             print("Écriture des données dans le bloc...")
