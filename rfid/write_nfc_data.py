@@ -12,9 +12,12 @@ def write_to_tag(pn532, uid, data):
         block_number = 6
 
         # Authentifier le bloc avec la clé A par défaut
-        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
-        
+        print("Authentification du bloc avec la clé A par défaut...")
+        key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
+        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key)
+
         # Écrire les données dans le bloc
+        print("Écriture des données dans le bloc...")
         pn532.mifare_classic_write_block(block_number, data)
 
         print("Données écrites avec succès dans le tag NFC.")
