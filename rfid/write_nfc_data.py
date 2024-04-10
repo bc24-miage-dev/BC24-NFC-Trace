@@ -18,23 +18,25 @@ def write_to_tag(pn532, uid, data):
 
         # Vérifier que chaque caractère de la chaîne hexadécimale est un caractère hexadécimal valide
         if all(c.isalnum() for c in data_hex):
-            # Ajouter des zéros à gauche de la chaîne hexadécimale jusqu'à ce qu'elle ait une longueur de 32 caractères
-            data_hex = data_hex.zfill(32)
 
             # Convertir la chaîne hexadécimale en tableau d'octets
             data_bytes = binascii.unhexlify(data_hex)
 
-            # Vérifier que le tableau d'octets a une longueur de 16 octets
-            if len(data_bytes) == 16:
-                # Écrire les données dans le bloc
-                print("Écriture des données dans le bloc...")
-                pn532.mifare_classic_write_block(block_number, data_bytes)
+            # Calculer la longueur du tableau d'octets
+            data_length = len(data_bytes)
 
-                print("Données écrites avec succès dans le tag NFC.")
-                return True
-            else:
-                print("Erreur : le tableau d'octets n'a pas une longueur de 16 octets.")
-                return False
+            # Ajouter des zéros à gauche du tableau d'octets jusqu'à ce qu'il ait une longueur de 16 octets
+            if data_length < 16:
+                padding_length = 16 - data_length
+                padding = b'\x00' * padding_length
+                data_bytes = padding + data_bytes
+
+            # Écrire les données dans le bloc
+            print("Écriture des données dans le bloc...")
+            pn532.mifare_classic_write_block(block_number, data_bytes)
+
+            print("Données écrites avec succès dans le tag NFC.")
+            return True
         else:
             print("Erreur : la chaîne hexadécimale contient des caractères non hexadécimaux.")
             return False
