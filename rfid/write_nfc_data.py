@@ -1,24 +1,24 @@
 import pn532.pn532 as nfc
 from pn532 import PN532_SPI
 import json
+import binascii
 
 def write_to_tag(pn532, uid, data):
     try:
         print("Chargement d'écriture des données dans le tag NFC...")
         # Configuration pour communiquer avec les cartes MiFare
         pn532.SAM_configuration()
-        
+
         # Définir le numéro de bloc à écrire
         block_number = 6
 
-        # Authentifier le bloc avec la clé A par défaut
-        print("Authentification du bloc avec la clé A par défaut...")
-        key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
-        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key)
+        # Convertir les données en chaîne de caractères hexadécimale
+        print("Conversion des données en chaîne hexadécimale...")
+        data_hex = binascii.hexlify(data.encode('utf-8')).decode('utf-8')
 
         # Écrire les données dans le bloc
         print("Écriture des données dans le bloc...")
-        pn532.mifare_classic_write_block(block_number, data)
+        nfc.mifareclassic_write_block(uid, block_number, binascii.unhexlify(data_hex))
 
         print("Données écrites avec succès dans le tag NFC.")
         return True
