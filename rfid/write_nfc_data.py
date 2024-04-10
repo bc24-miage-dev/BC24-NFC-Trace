@@ -16,9 +16,15 @@ def write_to_tag(pn532, uid, data):
         print("Conversion des données en chaîne hexadécimale...")
         data_hex = binascii.hexlify(data.encode('utf-8')).decode('utf-8')
 
+        # Ajouter des zéros à gauche de la chaîne hexadécimale jusqu'à ce qu'elle ait une longueur de 32 caractères
+        data_hex = data_hex.zfill(32)
+
+        # Convertir la chaîne hexadécimale en tableau d'octets
+        data_bytes = binascii.unhexlify(data_hex)
+
         # Écrire les données dans le bloc
         print("Écriture des données dans le bloc...")
-        pn532.mifare_classic_write_block(block_number, binascii.unhexlify(data_hex))
+        pn532.mifare_classic_write_block(block_number, binascii.unhexlify(data_bytes))
 
         print("Données écrites avec succès dans le tag NFC.")
         return True
