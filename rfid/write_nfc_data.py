@@ -22,6 +22,8 @@ def write_to_tag(pn532, uid, data):
             # Convertir la chaîne hexadécimale en tableau de bytes
             data_hex = data_hex.zfill(32)
 
+            data_bytes = [int(data_hex[i:i+2], 16) for i in range(0, len(data_hex), 2)]
+
             # Écrire les données dans le bloc
             print("Écriture des données dans le bloc...")
             pn532.mifare_classic_write_block(block_number, data_bytes)
