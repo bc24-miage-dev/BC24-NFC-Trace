@@ -1,9 +1,9 @@
-from pn532 import PN532_SPI
+from pn532 import PN532_SPI, PN532
 import json
 
 def write_to_tag(pn532, uid, data):
     try:
-        print("Processus d'écriture des données dans le tag NFC...")
+        print("Chargement d'écriture des données dans le tag NFC...")
         # Configuration pour communiquer avec les cartes MiFare
         pn532.SAM_configuration()
         
