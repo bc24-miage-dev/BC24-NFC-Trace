@@ -6,8 +6,8 @@ def write_to_tag(pn532, uid, data):
     try:
         block_number = 6
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
-        # Convertir les données en bytes
-        data_bytes = bytes(data, encoding='utf-8')
+        # Assurer que les données font exactement 16 octets
+        data_bytes = data.ljust(16, b'\0')[:16]
         pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
         pn532.mifare_classic_write_block(block_number, data_bytes)
         if pn532.mifare_classic_read_block(block_number) == data_bytes:
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         data_to_write = input("Entrez les données à écrire sur la carte RFID/NFC : ")
 
         # Écrire sur la carte RFID/NFC
-        if write_to_tag(pn532, uid, data_to_write):
+        if write_to_tag(pn532, uid, data_to_write.encode()):
             print("Écriture réussie sur la carte RFID/NFC.")
         else:
             print("Échec de l'écriture sur la carte RFID/NFC.")
