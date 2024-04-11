@@ -9,51 +9,27 @@ def write_to_tag(pn532, uid, data):
         # Configuration pour communiquer avec les cartes MiFare
         pn532.SAM_configuration()
 
-        # Convertir les données en chaîne de caractères hexadécimale
-        print("Conversion des données en chaîne hexadécimale...")
-        data_hex = binascii.hexlify(json.dumps(data).encode('utf-8')).decode('utf-8')
-        print("Valeur de data_hex :", data_hex)
+        # Convertir les données en une chaîne JSON
+        json_data = json.dumps(data)
 
-        # Vérifier que chaque caractère de la chaîne hexadécimale est un caractère hexadécimal valide
-        if all(c.isalnum() for c in data_hex):
+        # Convertir la chaîne JSON en tableau d'octets
+        data_bytes = json_data.encode('utf-8')
 
-            # Ajouter des zéros à droite de la chaîne hexadécimale jusqu'à ce qu'elle ait une longueur de 32 caractères
-            data_hex = data_hex.rjust(32, '0')
-
-            # Limiter la longueur de la chaîne hexadécimale à 32 caractères (16 octets)
-            data_hex = data_hex[:32]
-            print("Valeur de data_hex après ajout de zéros :", data_hex)
-
-            # Convertir la chaîne hexadécimale en tableau d'octets
-            data_bytes = [int(data_hex[i:i+2], 16) for i in range(0, len(data_hex), 2)]
-            print("Valeur de data_bytes :", data_bytes)
-
-            # Ajouter des octets nuls à la fin du tableau d'octets si nécessaire
-            if len(data_bytes) < 16:
-                data_bytes += [0] * (16 - len(data_bytes))
-
-            # TEST : Écriture des données de test statiques dans le bloc 7
-            print("Écriture des données de test dans le bloc...")
-            try:
-                test_data_bytes = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F]
-                pn532.mifare_classic_write_block(7, test_data_bytes)
-                print("Données de test écrites avec succès dans le tag NFC.")
-            except Exception as e:
-                print("Erreur lors de l'écriture des données de test dans le tag NFC :", e)
-                return False
-
-            # Écriture des données dans le bloc
-            print("Écriture des données dans le bloc...")
-            pn532.mifare_classic_write_block(6, data_bytes)
-
-            print("Données écrites avec succès dans le tag NFC.")
-            return True
-        else:
-            print("Erreur : la chaîne hexadécimale contient des caractères non hexadécimaux.")
+        # Vérifier que les données ont une longueur de 16 octets ou moins
+        if len(data_bytes) > 16:
+            print("Erreur : les données doivent avoir une longueur de 16 octets ou moins.")
             return False
+
+        # Écrire les données dans le bloc
+        print("Écriture des données dans le bloc...")
+        pn532.mifare_classic_write_block(6, data_bytes)
+
+        print("Données écrites avec succès dans le tag NFC.")
+        return True
     except Exception as e:
         print("Erreur lors de l'écriture dans le tag NFC :", e)
         return False
+
 
 
 def get_data_from_user():
