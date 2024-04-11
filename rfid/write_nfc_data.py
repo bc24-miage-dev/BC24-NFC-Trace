@@ -5,6 +5,8 @@ from pn532 import PN532_SPI
 def write_to_tag(pn532, uid, block_number, data_bytes):
     try:
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
+        # Assurez-vous que les données font exactement 16 octets
+        data_bytes = data_bytes.ljust(16, b'\0')[:16]
         pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
         pn532.mifare_classic_write_block(block_number, data_bytes)
         if pn532.mifare_classic_read_block(block_number) == data_bytes:
