@@ -51,13 +51,11 @@ if __name__ == '__main__':
                 break
         print('Carte trouvée avec UID :', [hex(i) for i in uid])
 
-        # Données à écrire sur la carte RFID/NFC
-        data = {
-            "NFT_tokenID": "XXX",
-            "temperature": "XXX",
-            "gps": "XXX",
-            "date": "XXX"
-        }
+        # Demander à l'utilisateur d'entrer les informations pour chaque clé
+        data = {}
+        for key in ["NFT_tokenID", "temperature", "gps", "date"]:
+            value = input(f"Entrez la valeur pour {key} : ")
+            data[key] = value
 
         # Convertir les données en octets et écrire dans le tag NFC
         for key, value in data.items():
