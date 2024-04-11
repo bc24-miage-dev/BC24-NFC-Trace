@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
-from pn532 import PN532_SPI
+from pn532 import *
 import pygame
 import json
 import os
@@ -34,9 +34,6 @@ if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
     with open('data.json', 'r') as f:
         tag_data = json.load(f)
 
-# Initialize block_data outside the main loop to store data from all blocks
-block_data = []
-
 # Main loop
 running = True
 while running:
@@ -58,7 +55,7 @@ while running:
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(7):
+    for i in range(64):
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
