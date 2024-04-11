@@ -9,12 +9,9 @@ def write_to_tag(pn532, uid, data):
         # Configuration pour communiquer avec les cartes MiFare
         pn532.SAM_configuration()
 
-        # Définir le numéro de bloc à écrire
-        block_number = 6
-
         # Convertir les données en chaîne de caractères hexadécimale
         print("Conversion des données en chaîne hexadécimale...")
-        data_hex = binascii.hexlify(data.encode('utf-8')).decode('utf-8')
+        data_hex = binascii.hexlify(json.dumps(data).encode('utf-8')).decode('utf-8')
 
         # Vérifier que chaque caractère de la chaîne hexadécimale est un caractère hexadécimal valide
         if all(c.isalnum() for c in data_hex):
@@ -31,7 +28,7 @@ def write_to_tag(pn532, uid, data):
 
             # Écrire les données dans le bloc
             print("Écriture des données dans le bloc...")
-            pn532.mifare_classic_write_block(block_number, data_bytes)
+            pn532.mifare_classic_write_block(6, data_bytes)
 
             print("Données écrites avec succès dans le tag NFC.")
             return True
@@ -44,26 +41,20 @@ def write_to_tag(pn532, uid, data):
 
 def get_data_from_user():
     # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
-    vache_id = input("Entrez l'ID de la vache : ")
-    date_passage = input("Entrez la date de passage : ")
-    etat_sante = input("Entrez l'état de santé : ")
-    # etat_alimentation = input("Entrez l'état d'alimentation : ")
-    # temperature = input("Entrez la température : ")
-    # latitude = input("Entrez la latitude : ")
-    # longitude = input("Entrez la longitude : ")
-    
-    # Ajout des informations de température et de GPS
+    NFT_tokenID = input("Entrez le NFT_tokenID : ")
+    temperature = input("Entrez la température : ")
+    gps = input("Entrez le GPS : ")
+    date = input("Entrez la date : ")
+
+    # Créer un dictionnaire avec les données entrées par l'utilisateur
     data = {
-        "vache_id": vache_id,
-        "date_passage": date_passage,
-        "etat_sante": etat_sante,
-        # "etat_alimentation": etat_alimentation,
-        # "temperature": temperature,
-        # "latitude": latitude,
-        # "longitude": longitude
+        "NFT_tokenID": NFT_tokenID,
+        "temperature": temperature,
+        "gps": gps,
+        "date": date
     }
-    
-    return json.dumps(data)
+
+    return data
 
 if __name__ == '__main__':
     try:
@@ -100,6 +91,6 @@ if __name__ == '__main__':
                 # Écrire dans le tag NFC
                 if write_to_tag(pn532, uid, data_to_write):
                     break
-                
+
     except Exception as e:
         print(e)

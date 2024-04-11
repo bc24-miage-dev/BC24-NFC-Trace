@@ -31,7 +31,7 @@ def display_message(message):
 
 def read_nfc_tag():
     # Lecture du bloc de données sur le tag NFC Mifare
-    block_number = 4  # Choisir le numéro de bloc approprié pour votre application
+    block_number = 6 # Bloc de données à lire
     try:
         data = pn532.mifare_classic_read_block(block_number)
         if data is not None:
