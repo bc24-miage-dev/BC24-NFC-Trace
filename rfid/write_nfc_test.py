@@ -9,16 +9,23 @@ pn532 = PN532_SPI(debug=False, reset=20, cs=4)
 def write_to_card(uid, block_number, data):
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     try:
-        # Authentifier le bloc avec la clé A
-        pn532.mifare_classic_authenticate_block(
-            uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
+        # Réinitialiser la clé du bloc 6 à la valeur par défaut
+        pn532.mifare_classic_change_key_setting(uid, block_number, nfc.MIFARE_CMD_AUTH_A, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+
+        # Authentifier le bloc 6 avec la clé par défaut
+        pn532.mifare_classic_authenticate_block(uid, block_number, nfc.MIFARE_CMD_AUTH_A, key_a)
+
         # Écrire les données dans le bloc
         pn532.mifare_classic_write_block(block_number, data)
+
         # Lire les données du bloc pour vérifier qu'elles ont été écrites correctement
-        if pn532.mifare_classic_read_block(block_number) == data:
+        block_data = pn532.mifare_classic_read_block(block_number)
+        if block_data == data:
             print('Écriture du bloc %d réussie' % block_number)
+        else:
+            print('Écriture du bloc %d échouée : données incorrectes' % block_number)
     except nfc.PN532Error as e:
-        print(e.errmsg)
+        print('Écriture du bloc %d échouée : %s' % (block_number, e.errmsg))
 
 if __name__ == '__main__':
     # Exemple d'UID de carte
