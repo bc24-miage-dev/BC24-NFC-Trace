@@ -19,6 +19,9 @@ def write_to_tag(pn532, uid, data):
             # Ajouter des zéros à droite de la chaîne hexadécimale jusqu'à ce qu'elle ait une longueur de 32 caractères
             data_hex = data_hex.rjust(32, '0')
 
+            # Limiter la longueur de la chaîne hexadécimale à 32 caractères (16 octets)
+            data_hex = data_hex[:32]
+
             # Convertir la chaîne hexadécimale en tableau d'octets
             data_bytes = [int(data_hex[i:i+2], 16) for i in range(0, len(data_hex), 2)]
 
