@@ -12,6 +12,7 @@ def write_to_tag(pn532, uid, data):
         # Convertir les données en chaîne de caractères hexadécimale
         print("Conversion des données en chaîne hexadécimale...")
         data_hex = binascii.hexlify(json.dumps(data).encode('utf-8')).decode('utf-8')
+        print("Valeur de data_hex :", data_hex)
 
         # Vérifier que chaque caractère de la chaîne hexadécimale est un caractère hexadécimal valide
         if all(c.isalnum() for c in data_hex):
@@ -21,9 +22,11 @@ def write_to_tag(pn532, uid, data):
 
             # Limiter la longueur de la chaîne hexadécimale à 32 caractères (16 octets)
             data_hex = data_hex[:32]
+            print("Valeur de data_hex après ajout de zéros :", data_hex)
 
             # Convertir la chaîne hexadécimale en tableau d'octets
             data_bytes = [int(data_hex[i:i+2], 16) for i in range(0, len(data_hex), 2)]
+            print("Valeur de data_bytes :", data_bytes)
 
             # Ajouter des octets nuls à la fin du tableau d'octets si nécessaire
             if len(data_bytes) < 16:
@@ -41,6 +44,7 @@ def write_to_tag(pn532, uid, data):
     except Exception as e:
         print("Erreur lors de l'écriture dans le tag NFC :", e)
         exit()
+
 
 def get_data_from_user():
     # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
