@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
-from pn532 import *
+from pn532 import PN532_SPI
 import pygame
 import json
 import os
@@ -33,6 +33,9 @@ tag_data = []
 if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
     with open('data.json', 'r') as f:
         tag_data = json.load(f)
+
+# Initialize block_data outside the main loop to store data from all blocks
+block_data = []
 
 # Main loop
 running = True
