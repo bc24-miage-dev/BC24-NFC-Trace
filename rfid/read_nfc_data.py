@@ -52,10 +52,10 @@ while running:
     # Convert UID to hex string
     uid_hex = ':'.join('{:02X}'.format(x) for x in uid)
 
-    # Read data from all blocks
+    # Read data from the first 7 blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(64):
+    for i in range(7):  # Seulement les 7 premiers blocs
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
