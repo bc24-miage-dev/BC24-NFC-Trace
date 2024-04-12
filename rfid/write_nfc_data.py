@@ -75,6 +75,7 @@ if __name__ == '__main__':
                     read_data = read_from_tag(pn532, uid, block_number=6)
                     if read_data is not None:
                         print("Données lues depuis la carte RFID/NFC :", read_data.decode())
+                        break
                     else:
                         print("Échec de la lecture des données depuis la carte RFID/NFC.")
                 else:
