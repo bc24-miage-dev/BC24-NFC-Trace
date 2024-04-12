@@ -114,7 +114,7 @@ def loop():
 		chk = dht.readDHT11()	
 		if (chk is 0):
 			okCnt += 1		
-		okRate = 100.0*okCnt/sumCnt;
+		okRate = 100.0*okCnt/sumCnt
 		print("sumCnt : %d, \t okRate : %.2f%% "%(sumCnt,okRate))
 		print("chk : %d, \t Humidity : %.2f, \t Temperature : %.2f "%(chk,dht.humidity,dht.temperature))
 		time.sleep(3)		
