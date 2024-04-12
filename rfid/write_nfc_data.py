@@ -59,7 +59,7 @@ if __name__ == '__main__':
             uid = pn532.read_passive_target(timeout=0.5)
             print('.', end="")
             # Réessayer si aucune carte n'est disponible.
-            if uid is not None:
+            if uid is None:
                 print("Aucun tag NFC détecté après 15 secondes.")
                 while True:
                     choix = input("Voulez-vous réessayer ? (yes/no) : ")
