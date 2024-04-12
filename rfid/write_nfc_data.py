@@ -40,6 +40,10 @@ def read_from_tag(pn532, uid, block_number):
         print('Erreur lors de la lecture du tag NFC :', e)
         return None
 
+def get_data_from_user():
+    data_to_write = input("Entrez les données à écrire sur la carte RFID/NFC : ")
+    return data_to_write
+
 if __name__ == '__main__':
     try:
         # Initialisation du module NFC PN532
@@ -56,11 +60,22 @@ if __name__ == '__main__':
             print('.', end="")
             # Réessayer si aucune carte n'est disponible.
             if uid is not None:
-                break
-        print('Carte trouvée avec UID :', [hex(i) for i in uid])
+                print("Aucun tag NFC détecté après 15 secondes.")
+                while True:
+                    choix = input("Voulez-vous réessayer ? (yes/no) : ")
+                    if choix.lower() == "yes":
+                        print("Réessayer la détection du tag NFC...")
+                        break
+                    elif choix.lower() == "no":
+                        print("Arrêt du programme.")
+                        exit()
+                    else:
+                        print("Choix invalide. Veuillez répondre par 'yes' ou 'no'.")
+        print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
+        print("Permission d'écriture autorisée ...")
 
         # Demander à l'utilisateur d'entrer les données à écrire dans la carte RFID/NFC
-        data_to_write = input("Entrez les données à écrire sur la carte RFID/NFC : ")
+        data_to_write = get_data_from_user()
 
         # Écrire sur la carte RFID/NFC
         if write_to_tag(pn532, uid, data_to_write.encode()):
