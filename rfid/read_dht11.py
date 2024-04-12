@@ -45,9 +45,9 @@ def main():
         time.sleep(5)
 
 if __name__ == '__main__':
-	print ('Program is starting ... ')
-	try:
-		main()
-	except KeyboardInterrupt:
-		pass
-		exit()
+    print('Program is starting ... ')
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+        GPIO.cleanup()
