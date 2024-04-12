@@ -44,8 +44,10 @@ def main():
             print("Failed to read data from DHT11 sensor")
         time.sleep(5)
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        GPIO.cleanup()  # Nettoyer les broches GPIO utilisées lors de l'arrêt du programme
+if __name__ == '__main__':
+	print ('Program is starting ... ')
+	try:
+		main()
+	except KeyboardInterrupt:
+		pass
+		exit()
