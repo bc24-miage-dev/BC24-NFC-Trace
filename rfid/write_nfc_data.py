@@ -50,11 +50,12 @@ if __name__ == '__main__':
         pn532 = PN532_SPI(debug=False, reset=20, cs=4)
         ic, ver, rev, support = pn532.get_firmware_version()
         print('Module NFC PN532 trouvé avec la version de firmware : {0}.{1}'.format(ver, rev))
-        # Configuration pour communiquer avec les cartes MiFare
-        pn532.SAM_configuration()
-
-        print('En attente de la carte RFID/NFC à écrire...')
+        
         while True:
+            # Configuration pour communiquer avec les cartes MiFare
+            pn532.SAM_configuration()
+
+            print('En attente de la carte RFID/NFC à écrire...')
             # Vérifier si une carte est disponible à la lecture
             uid = pn532.read_passive_target(timeout=0.5)
             print('.', end="")
