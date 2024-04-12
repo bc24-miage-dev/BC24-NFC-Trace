@@ -60,7 +60,7 @@ while running:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
             data = pn532.mifare_classic_read_block(i)
-            block_data.append(data.hex())  # Convert data to hex string
+            block_data.append(data.decode('utf-8'))  # Convertir les données en Unicode
         except nfc.PN532Error as e:
             print(e.errmsg)
             break
