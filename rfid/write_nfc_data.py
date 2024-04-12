@@ -30,6 +30,7 @@ def get_block_number_for_key(key):
     elif key == "date":
         return 7
     else:
+        print(f"Clé non reconnue : {key}")
         return None
 
 if __name__ == '__main__':
