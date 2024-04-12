@@ -66,40 +66,40 @@ while running:
             break
 
     # Add tag data to list
-tag_data.append({'uid': uid_hex, 'data': block_data[:7]})  # Limite aux 7 premiers blocs
+    tag_data.append({'uid': uid_hex, 'data': block_data[:7]})  # Limite aux 7 premiers blocs
 
-# Serialize tag data to JSON file
-with open('data.json', 'w') as f:
-    json.dump(tag_data[-1:], f, indent=4)  # Écrit uniquement le dernier élément ajouté
-    f.write('\n')  # Add a newline after each tag data
+    # Serialize tag data to JSON file
+    with open('data.json', 'w') as f:
+        json.dump(tag_data[-1:], f, indent=4)  # Écrit uniquement le dernier élément ajouté
+        f.write('\n')  # Add a newline after each tag data
 
-# Display tag data on screen
-display.fill((255, 255, 255))
-label = FONT.render('Tag Data (' + uid_hex + '):', True, (0, 0, 0))
-display.blit(label, (50, 50))
+    # Display tag data on screen
+    display.fill((255, 255, 255))
+    label = FONT.render('Tag Data (' + uid_hex + '):', True, (0, 0, 0))
+    display.blit(label, (50, 50))
 
-# Draw table header
-header_font = pygame.font.SysFont('Arial', FONT_SIZE * 2)
-header_label = header_font.render('Block', True, (0, 0, 0))
-header_rect = header_label.get_rect()
-header_rect.topleft = (50, 100)
-display.blit(header_label, header_rect)
+    # Draw table header
+    header_font = pygame.font.SysFont('Arial', FONT_SIZE * 2)
+    header_label = header_font.render('Block', True, (0, 0, 0))
+    header_rect = header_label.get_rect()
+    header_rect.topleft = (50, 100)
+    display.blit(header_label, header_rect)
 
-# Draw table data for the first 7 blocks
-row_height = FONT_SIZE + 5
-col_width = 450
-num_cols = 2
-num_blocks_to_display = min(7, len(block_data))  # Limit to the first 7 blocks
-for i in range(num_blocks_to_display):
-    row = i // num_cols
-    col = i % num_cols
-    data_label = ' '.join(block_data[i][j:j+2] for j in range(0, len(block_data[i]), 2))
-    label = FONT.render(data_label, True, (0, 0, 0))
-    label_rect = label.get_rect()
-    label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
-    display.blit(label, label_rect)
+    # Draw table data for the first 7 blocks
+    row_height = FONT_SIZE + 5
+    col_width = 450
+    num_cols = 2
+    num_blocks_to_display = min(7, len(block_data))  # Limit to the first 7 blocks
+    for i in range(num_blocks_to_display):
+        row = i // num_cols
+        col = i % num_cols
+        data_label = ' '.join(block_data[i][j:j+2] for j in range(0, len(block_data[i]), 2))
+        label = FONT.render(data_label, True, (0, 0, 0))
+        label_rect = label.get_rect()
+        label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
+        display.blit(label, label_rect)
 
-pygame.display.update()
+    pygame.display.update()
 
 
     # Serialize tag data to JSON file
