@@ -60,7 +60,26 @@ if __name__ == '__main__':
             uid = pn532.read_passive_target(timeout=0.5)
             print('.', end="")
             # Réessayer si aucune carte n'est disponible.
-            if uid is None:
+            if uid is not None:    
+                print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
+                print("Permission d'écriture autorisée ...")
+
+                # Demander à l'utilisateur d'entrer les données à écrire dans la carte RFID/NFC
+                data_to_write = get_data_from_user()
+
+                # Écrire sur la carte RFID/NFC
+                if write_to_tag(pn532, uid, data_to_write.encode()):
+                    print("Écriture réussie sur la carte RFID/NFC.")
+
+                    # Lire à nouveau les données écrites pour vérification
+                    read_data = read_from_tag(pn532, uid, block_number=6)
+                    if read_data is not None:
+                        print("Données lues depuis la carte RFID/NFC :", read_data.decode())
+                    else:
+                        print("Échec de la lecture des données depuis la carte RFID/NFC.")
+                else:
+                    print("Échec de l'écriture sur la carte RFID/NFC.")
+            else:
                 print("Aucun tag NFC détecté après 15 secondes.")
                 while True:
                     choix = input("Voulez-vous réessayer ? (yes/no) : ")
@@ -72,24 +91,6 @@ if __name__ == '__main__':
                         exit()
                     else:
                         print("Choix invalide. Veuillez répondre par 'yes' ou 'no'.")
-        print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
-        print("Permission d'écriture autorisée ...")
-
-        # Demander à l'utilisateur d'entrer les données à écrire dans la carte RFID/NFC
-        data_to_write = get_data_from_user()
-
-        # Écrire sur la carte RFID/NFC
-        if write_to_tag(pn532, uid, data_to_write.encode()):
-            print("Écriture réussie sur la carte RFID/NFC.")
-
-            # Lire à nouveau les données écrites pour vérification
-            read_data = read_from_tag(pn532, uid, block_number=6)
-            if read_data is not None:
-                print("Données lues depuis la carte RFID/NFC :", read_data.decode())
-            else:
-                print("Échec de la lecture des données depuis la carte RFID/NFC.")
-        else:
-            print("Échec de l'écriture sur la carte RFID/NFC.")
             
     except Exception as e:
         print(e)
