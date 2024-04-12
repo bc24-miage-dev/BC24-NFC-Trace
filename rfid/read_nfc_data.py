@@ -55,7 +55,7 @@ while running:
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(7):
+    for i in range(7):  # Lire uniquement les 7 premiers blocs
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
@@ -65,13 +65,10 @@ while running:
             print(e.errmsg)
             break
 
-    # Add tag data to list
-    tag_data.append({'uid': uid_hex, 'data': block_data[:7]})  # Limite aux 7 premiers blocs
-
     # Serialize tag data to JSON file
     with open('data.json', 'w') as f:
-        json.dump(tag_data[-1:], f, indent=4)  # Écrit uniquement le dernier élément ajouté
-        f.write('\n')  # Add a newline after each tag data
+        json.dump({'uid': uid_hex, 'data': block_data}, f, indent=4)  # Écrit uniquement les données du dernier tag
+        f.write('\n')  # Ajouter une nouvelle ligne
 
     # Display tag data on screen
     display.fill((255, 255, 255))
@@ -85,27 +82,20 @@ while running:
     header_rect.topleft = (50, 100)
     display.blit(header_label, header_rect)
 
-    # Draw table data for the first 7 blocks
+    # Draw table data
     row_height = FONT_SIZE + 5
     col_width = 450
     num_cols = 2
-    num_blocks_to_display = min(7, len(block_data))  # Limit to the first 7 blocks
-    for i in range(num_blocks_to_display):
+    for i, data in enumerate(block_data):
         row = i // num_cols
         col = i % num_cols
-        data_label = ' '.join(block_data[i][j:j+2] for j in range(0, len(block_data[i]), 2))
+        data_label = ' '.join(data[j:j+2] for j in range(0, len(data), 2))
         label = FONT.render(data_label, True, (0, 0, 0))
         label_rect = label.get_rect()
         label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
         display.blit(label, label_rect)
 
     pygame.display.update()
-
-
-    # Serialize tag data to JSON file
-    with open('data.json', 'w') as f:
-        json.dump(tag_data, f, indent=4)  # Indent JSON output
-        f.write('\n')  # Add a newline after each tag data
 
     # Wait for user to remove card
     while uid is not None:
