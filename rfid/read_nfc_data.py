@@ -55,7 +55,7 @@ while running:
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(64):
+    for i in range(7):
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
@@ -80,14 +80,15 @@ while running:
     header_rect.topleft = (50, 100)
     display.blit(header_label, header_rect)
 
-    # Draw table data
+    # Draw table data for the first 7 blocks
     row_height = FONT_SIZE + 5
     col_width = 450
     num_cols = 2
-    for i, data in enumerate(block_data):
+    num_blocks_to_display = min(7, len(block_data))  # Limit to the first 7 blocks
+    for i in range(num_blocks_to_display):
         row = i // num_cols
         col = i % num_cols
-        data_label = ' '.join(data[j:j+2] for j in range(0, len(data), 2))
+        data_label = ' '.join(block_data[i][j:j+2] for j in range(0, len(block_data[i]), 2))
         label = FONT.render(data_label, True, (0, 0, 0))
         label_rect = label.get_rect()
         label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
