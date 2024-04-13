@@ -29,16 +29,15 @@ def loop():
     while True:
         sumCnt += 1
         data = bme.read_temperature()
-        humidity = self.sensor.data.humidity
         if data is not None:
             okCnt += 1
         okRate = 100.0 * okCnt / sumCnt
         print("sumCnt : %d, \t okRate : %.2f%% " % (sumCnt, okRate))
         if data is not None:
             temperature = data
-            print("Status: 0, \t Temperature: %.2f, \t Humidity: %.2f" % (temperature, humidity))
+            print("Status: 0, \t Temperature: %.2f " % (temperature))
         else:
-            print("Status: -1, \t Temperature: n/a, \t Humidity: n/a")
+            print("Status: -1, \t Temperature: n/a")
         time.sleep(3)
 
 if __name__ == '__main__':
