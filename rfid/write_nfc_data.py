@@ -13,15 +13,17 @@ def write_to_tag(pn532, uid, data):
         nft_token_unicode = nft_token.ljust(16, ' ')
         temperature_unicode = temperature.ljust(16, ' ')
         gps_unicode = gps.ljust(16, ' ')
-        date_unicode = date.ljust(16, ' ')
+        # date_unicode = date.ljust(16, ' ')
 
         # Convertir les données en bytes
         nft_token_bytes = nft_token_unicode.encode('utf-8')
         temperature_bytes = temperature_unicode.encode('utf-8')
         gps_bytes = gps_unicode.encode('utf-8')
-        date_bytes = date_unicode.encode('utf-8')
+        # date_bytes = date_unicode.encode('utf-8')
 
-        for block_number, data_bytes in zip(range(4, 8), [nft_token_bytes, temperature_bytes, gps_bytes, date_bytes]):
+        for block_number, data_bytes in zip(range(4, 8), [nft_token_bytes, temperature_bytes, gps_bytes, 
+        # date_bytes
+        ]):
             print("Côté écriture : Authentification du bloc {}...".format(block_number))
             pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
@@ -60,8 +62,9 @@ def get_data_from_user():
     nft_token = input("NFT_tokenID : ")
     temperature = input("Température : ")
     gps = input("GPS : ")
-    date = input("Date : ")
-    return nft_token, temperature, gps, date
+    # date = input("Date : ")
+    return nft_token, temperature, gps, 
+    # date
 
 if __name__ == '__main__':
     try:
