@@ -1,48 +1,33 @@
-import Adafruit_DHT
 import time
-import RPi.GPIO as GPIO
+import board
+import busio
+import adafruit_bme680
 
-class DHT(object):
-    DHTLIB_OK = 0
-    DHTLIB_ERROR_CHECKSUM = -1
-    DHTLIB_ERROR_TIMEOUT = -2
-    DHTLIB_INVALID_VALUE = -999
+class BME680:
+    def __init__(self):
+        self.i2c = busio.I2C(board.SCL, board.SDA)
+        self.bme680 = adafruit_bme680.Adafruit_BME680_I2C(self.i2c)
+        self.bme680.sea_level_pressure = 1013.25
 
-    DHTLIB_DHT11_WAKEUP = 0.020  # 18ms
-    DHTLIB_TIMEOUT = 0.0001  # 100us
-
-    humidity = 0
-    temperature = 0
-
-    def __init__(self, pin):
-        self.pin = pin
-        self.bits = [0, 0, 0, 0, 0]
-        GPIO.setmode(GPIO.BCM)
-        print("DHT object initialized on pin:", pin)
-
-    def read_dht_sensor(self):
-        print("Reading sensor data...")
-        humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, self.pin)
-        if humidity is not None and temperature is not None:
-            print("Sensor data read successfully.")
-            return self.DHTLIB_OK, humidity, temperature
+    def read_bme680_data(self):
+        if self.bme680.temperature is not None and self.bme680.humidity is not None:
+            return 0, self.bme680.temperature, self.bme680.humidity
         else:
-            print("Warning: Failed to read sensor data.")
-            return self.DHTLIB_INVALID_VALUE, self.DHTLIB_INVALID_VALUE, self.DHTLIB_INVALID_VALUE
+            return -999, -999, -999
 
 def loop():
-    dht = DHT(11)
+    bme = BME680()
     sumCnt = 0
     okCnt = 0
     while True:
         sumCnt += 1
-        chk, humidity, temperature = dht.read_dht_sensor()
+        chk, temperature, humidity = bme.read_bme680_data()
         if chk == 0:
             okCnt += 1
 
         okRate = 100.0 * okCnt / sumCnt
         print("Attempt: %d, \t Success rate: %.2f%%" % (sumCnt, okRate))
-        print("Status: %d, \t Humidity: %.2f, \t Temperature: %.2f" % (chk, humidity, temperature))
+        print("Status: %d, \t Temperature: %.2f, \t Humidity: %.2f" % (chk, temperature, humidity))
         time.sleep(3)
 
 if __name__ == '__main__':
@@ -50,5 +35,5 @@ if __name__ == '__main__':
     try:
         loop()
     except KeyboardInterrupt:
-        print("\nProgram stopped by user.")
+        pass
     exit()
