@@ -101,7 +101,7 @@ while running:
     row_height = FONT_SIZE + 5
     col_width = 450
     num_cols = 2
-    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "data"]):
+    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
         data_label = block_name + ": " + tag_data[-1][block_name]
         label = FONT.render(data_label, True, (0, 0, 0))
         label_rect = label.get_rect()
