@@ -22,7 +22,7 @@ class BME680Sensor:
                 "temperature": self.sensor.data.temperature,
                 "humidity": self.sensor.data.humidity
             }
-            with open("data.json", "w") as f:
+            with open("temp.json", "w") as f:
                 json.dump(data, f)
             return self.sensor.data.temperature, self.sensor.data.humidity
         else:
