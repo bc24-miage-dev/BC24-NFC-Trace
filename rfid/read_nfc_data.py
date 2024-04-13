@@ -29,10 +29,17 @@ print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
 pn532.SAM_configuration()
 
 # Load tag data from JSON file
-tag_data = []
 if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
     with open('data.json', 'r') as f:
-        tag_data = json.load(f)
+        loaded_data = json.load(f)
+        if isinstance(loaded_data, list):
+            tag_data = loaded_data
+        else:
+            print("Invalid data format in data.json. Expected a list.")
+            tag_data = []
+else:
+    tag_data = []
+
 
 # Main loop
 running = True
