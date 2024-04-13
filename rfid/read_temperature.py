@@ -16,15 +16,9 @@ class BME680Sensor:
         self.sensor.set_temperature_oversample(bme680.OS_8X)
         self.sensor.set_filter(bme680.FILTER_SIZE_3)
 
-    def read_data(self):
+    def read_temperature(self):
         if self.sensor.get_sensor_data():
-            data = {
-                "temperature": self.sensor.data.temperature,
-                "humidity": self.sensor.data.humidity
-            }
-            with open("temp.json", "w") as f:
-                json.dump(data, f)
-            return self.sensor.data.temperature, self.sensor.data.humidity
+            return self.sensor.data.temperature
         else:
             return None
 
@@ -34,13 +28,14 @@ def loop():
     okCnt = 0
     while True:
         sumCnt += 1
-        data = bme.read_data()
+        data = bme.read_temperature()
+        humidity = self.sensor.data.humidity
         if data is not None:
             okCnt += 1
         okRate = 100.0 * okCnt / sumCnt
         print("sumCnt : %d, \t okRate : %.2f%% " % (sumCnt, okRate))
         if data is not None:
-            temperature, humidity = data
+            temperature = data
             print("Status: 0, \t Temperature: %.2f, \t Humidity: %.2f" % (temperature, humidity))
         else:
             print("Status: -1, \t Temperature: n/a, \t Humidity: n/a")
