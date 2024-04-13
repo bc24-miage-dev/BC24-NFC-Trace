@@ -4,6 +4,7 @@ from pn532 import *
 import pygame
 import json
 import os
+import sys
 
 # Initialize Pygame
 pygame.init()
@@ -28,17 +29,12 @@ print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
 # Configure PN532 to communicate with MiFare cards
 pn532.SAM_configuration()
 
-# Load tag data from JSON file
-if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
-    with open('data.json', 'r') as f:
-        loaded_data = json.load(f)
-        if isinstance(loaded_data, list):
-            tag_data = loaded_data
-        else:
-            print("Invalid data format in data.json. Expected a list.")
-            tag_data = []
-else:
-    tag_data = []
+# Chemin du répertoire JSON
+JSON_DIRECTORY = "json/"
+
+# Créer le répertoire JSON s'il n'existe pas
+if not os.path.exists(JSON_DIRECTORY):
+    os.makedirs(JSON_DIRECTORY)
 
 # Main loop
 try:
@@ -84,7 +80,7 @@ try:
                 break
 
         # Add tag data to list
-        tag_data.append({'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps, 'date': date})
+        tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps, 'date': date}
 
         # Display tag data on screen
         display.fill((255, 255, 255))
@@ -103,7 +99,7 @@ try:
         col_width = 450
         num_cols = 2
         for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
-            data_label = block_name + ": " + tag_data[-1][block_name]
+            data_label = block_name + ": " + tag_data[block_name]
             label = FONT.render(data_label, True, (0, 0, 0))
             label_rect = label.get_rect()
             row = i // num_cols
@@ -113,10 +109,10 @@ try:
 
         pygame.display.update()
 
-        # Serialize tag data to JSON file
-        with open('data.json', 'w') as f:
-            json.dump(tag_data, f, indent=4)  # Indent JSON output
-            f.write('\n')  # Add a newline after each tag data
+        # Write tag data to JSON file with UID as filename
+        filename = JSON_DIRECTORY + 'data_' + uid_hex + '.json'
+        with open(filename, 'w') as f:
+            json.dump(tag_data, f, indent=4)
 
         # Wait for user to remove card
         while uid is not None:
@@ -126,7 +122,8 @@ try:
         display.fill((255, 255, 255))
         pygame.display.update()
 
-# Clean up
-finally:
+except KeyboardInterrupt:
+    print("Exiting program...")
     GPIO.cleanup()
     pygame.quit()
+    sys.exit(0)
