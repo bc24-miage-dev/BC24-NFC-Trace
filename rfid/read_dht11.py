@@ -1,44 +1,50 @@
 #!/usr/bin/env python3
-#############################################################################
-# Filename    : read_dht11.py
-# Description :	DHT Temperature & Humidity Sensor reader
-########################################################################
+
+import bme680
 import time
-import board
-import busio
-import adafruit_bme680
 
-class BME680:
+class BME680Sensor:
     def __init__(self):
-        self.i2c = busio.I2C(board.SCL, board.SDA)
-        self.bme680 = adafruit_bme680.Adafruit_BME680_I2C(self.i2c)
-        self.bme680.sea_level_pressure = 1013.25
+        try:
+            self.sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
+        except (RuntimeError, IOError):
+            self.sensor = bme680.BME680(bme680.I2C_ADDR_SECONDARY)
 
-    def read_bme680_data(self):
-        if self.bme680.temperature is not None and self.bme680.humidity is not None:
-            return 0, self.bme680.temperature, self.bme680.humidity
+        # These oversampling settings can be tweaked to
+        # change the balance between accuracy and noise in
+        # the data.
+        self.sensor.set_humidity_oversample(bme680.OS_2X)
+        self.sensor.set_pressure_oversample(bme680.OS_4X)
+        self.sensor.set_temperature_oversample(bme680.OS_8X)
+        self.sensor.set_filter(bme680.FILTER_SIZE_3)
+
+    def read_data(self):
+        if self.sensor.get_sensor_data():
+            return self.sensor.data.temperature, self.sensor.data.humidity
         else:
-            return -999, -999, -999
+            return None
 
 def loop():
-    bme = BME680()
+    bme = BME680Sensor()
     sumCnt = 0
     okCnt = 0
     while True:
         sumCnt += 1
-        chk, temperature, humidity = bme.read_bme680_data()
-        if chk == 0:
+        data = bme.read_data()
+        if data is not None:
             okCnt += 1
-
         okRate = 100.0 * okCnt / sumCnt
-        print("Attempt: %d, \t Success rate: %.2f%%" % (sumCnt, okRate))
-        print("Status: %d, \t Temperature: %.2f, \t Humidity: %.2f" % (chk, temperature, humidity))
+        print("sumCnt : %d, \t okRate : %.2f%% " % (sumCnt, okRate))
+        if data is not None:
+            temperature, humidity = data
+            print("Status: 0, \t Temperature: %.2f, \t Humidity: %.2f" % (temperature, humidity))
+        else:
+            print("Status: -1, \t Temperature: n/a, \t Humidity: n/a")
         time.sleep(3)
 
 if __name__ == '__main__':
-    print('Program is starting ... ')
+    print('Program is starting...')
     try:
         loop()
     except KeyboardInterrupt:
         pass
-    exit()
