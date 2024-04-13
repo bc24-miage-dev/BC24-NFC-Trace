@@ -63,9 +63,9 @@ while running:
     token_id = ""
     temperature = ""
     gps = ""
-    other_data = ""
+    date = ""
 
-    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "data"]):
+    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=10+i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
@@ -77,13 +77,13 @@ while running:
             elif i == 2:
                 gps = data.hex()
             elif i == 3:
-                other_data = data.hex()
+                date = data.hex()
         except nfc.PN532Error as e:
             print(e.errmsg)
             break
 
     # Add tag data to list
-    tag_data.append({'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps, 'data': other_data})
+    tag_data.append({'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps, 'date': date})
 
     # Display tag data on screen
     display.fill((255, 255, 255))
@@ -101,7 +101,7 @@ while running:
     row_height = FONT_SIZE + 5
     col_width = 450
     num_cols = 2
-    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "data"]):
+    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
         data_label = block_name + ": " + tag_data[-1][block_name]
         label = FONT.render(data_label, True, (0, 0, 0))
         label_rect = label.get_rect()
@@ -127,4 +127,4 @@ while running:
 
 # Clean up
 GPIO.cleanup()
-pygame
+pygame.quit()
