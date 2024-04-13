@@ -29,10 +29,17 @@ print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
 pn532.SAM_configuration()
 
 # Load tag data from JSON file
-tag_data = []
 if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
     with open('data.json', 'r') as f:
-        tag_data = json.load(f)
+        loaded_data = json.load(f)
+        if isinstance(loaded_data, list):
+            tag_data = loaded_data
+        else:
+            print("Invalid data format in data.json. Expected a list.")
+            tag_data = []
+else:
+    tag_data = []
+
 
 # Main loop
 running = True
@@ -55,7 +62,7 @@ while running:
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(7):  # Lire uniquement les 7 premiers blocs
+    for i in range(5,9):
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
@@ -65,10 +72,8 @@ while running:
             print(e.errmsg)
             break
 
-    # Serialize tag data to JSON file
-    with open('data.json', 'w') as f:
-        json.dump({'uid': uid_hex, 'data': block_data}, f, indent=4)  # Écrit uniquement les données du dernier tag
-        f.write('\n')  # Ajouter une nouvelle ligne
+    # Add tag data to list
+    tag_data.append({'uid': uid_hex, 'data': block_data})
 
     # Display tag data on screen
     display.fill((255, 255, 255))
@@ -96,6 +101,11 @@ while running:
         display.blit(label, label_rect)
 
     pygame.display.update()
+
+    # Serialize tag data to JSON file
+    with open('data.json', 'w') as f:
+        json.dump(tag_data, f, indent=4)  # Indent JSON output
+        f.write('\n')  # Add a newline after each tag data
 
     # Wait for user to remove card
     while uid is not None:

@@ -4,7 +4,7 @@ from pn532 import PN532_SPI
 
 def write_to_tag(pn532, uid, data):
     try:
-        block_number = 6
+        block_number = 4
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         print("Chargement d'écriture des données dans le tag NFC...")
 
