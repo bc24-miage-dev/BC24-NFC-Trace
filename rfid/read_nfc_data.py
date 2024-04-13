@@ -55,7 +55,7 @@ while running:
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(7):  # Lire uniquement les 7 premiers blocs
+    for i in range(4,8):
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
@@ -65,10 +65,8 @@ while running:
             print(e.errmsg)
             break
 
-    # Serialize tag data to JSON file
-    with open('data.json', 'w') as f:
-        json.dump({'uid': uid_hex, 'data': block_data}, f, indent=4)  # Écrit uniquement les données du dernier tag
-        f.write('\n')  # Ajouter une nouvelle ligne
+    # Add tag data to list
+    tag_data.append({'uid': uid_hex, 'data': block_data})
 
     # Display tag data on screen
     display.fill((255, 255, 255))
@@ -96,6 +94,11 @@ while running:
         display.blit(label, label_rect)
 
     pygame.display.update()
+
+    # Serialize tag data to JSON file
+    with open('data.json', 'w') as f:
+        json.dump(tag_data, f, indent=4)  # Indent JSON output
+        f.write('\n')  # Add a newline after each tag data
 
     # Wait for user to remove card
     while uid is not None:
