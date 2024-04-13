@@ -1,28 +1,31 @@
-import serial
+#!/usr/bin/env python3
+
 import time
+from pa1010d import PA1010D
 
 class GPS:
-    def __init__(self, port='/dev/serial0', baudrate=9600):
-        self.ser = serial.Serial(port, baudrate, timeout=1)
+    def __init__(self):
+        self.gps = PA1010D()
 
     def read_data(self):
-        data = {}
-        while True:
-            line = self.ser.readline().decode('utf-8').strip()
-            if not line:
-                continue
-            if line[0:6] == '$GPRMC':
-                values = line.split(',')
-                if len(values) >= 10 and values[2] == 'A':
-                    data['timestamp'] = values[1]
-                    data['latitude'] = values[3] + values[4]/60.0
-                    data['longitude'] = values[5] + values[6]/60.0
-                    data['speed_over_ground'] = values[7]
-                    data['course_over_ground'] = values[8]
-                    data['date'] = values[9]
-                    return data
-            time.sleep(0.1)
-        return None
+        result = self.gps.update()
+        if result:
+            data = {
+                "timestamp": self.gps.data["timestamp"],
+                "latitude": self.gps.data["latitude"],
+                "longitude": self.gps.data["longitude"],
+                "altitude": self.gps.data["altitude"],
+                "num_sats": self.gps.data["num_sats"],
+                "gps_qual": self.gps.data["gps_qual"],
+                "speed_over_ground": self.gps.data["speed_over_ground"],
+                "mode_fix_type": self.gps.data["mode_fix_type"],
+                "pdop": self.gps.data["pdop"],
+                "vdop": self.gps.data["vdop"],
+                "hdop": self.gps.data["hdop"],
+            }
+            return data
+        else:
+            return None
 
 def loop():
     gps = GPS()
