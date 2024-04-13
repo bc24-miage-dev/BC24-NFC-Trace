@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+#############################################################################
+# Filename    : read_dht11.py
+# Description :	DHT Temperature & Humidity Sensor reader
+########################################################################
 import time
 import board
 import busio
