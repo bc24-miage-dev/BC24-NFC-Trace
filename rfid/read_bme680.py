@@ -2,6 +2,7 @@
 
 import bme680
 import time
+import json
 
 class BME680Sensor:
     def __init__(self):
@@ -17,6 +18,12 @@ class BME680Sensor:
 
     def read_data(self):
         if self.sensor.get_sensor_data():
+            data = {
+                "temperature": self.sensor.data.temperature,
+                "humidity": self.sensor.data.humidity
+            }
+            with open("data.json", "w") as f:
+                json.dump(data, f)
             return self.sensor.data.temperature, self.sensor.data.humidity
         else:
             return None
