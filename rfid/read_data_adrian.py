@@ -110,9 +110,10 @@ try:
         pygame.display.update()
 
         # Write tag data to JSON file with UID as filename
-        filename = JSON_DIRECTORY + 'data_' + uid_hex + '.json'
+        filename = JSON_DIRECTORY + 'data_' + uid_hex.replace(':', '_') + '.json'
         with open(filename, 'w') as f:
             json.dump(tag_data, f, indent=4)
+
 
         # Wait for user to remove card
         while uid is not None:

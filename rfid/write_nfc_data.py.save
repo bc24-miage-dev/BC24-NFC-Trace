@@ -1,0 +1,62 @@
+import pn532.pn532 as nfc
+from pn532 import PN532_SPI
+import json
+import binascii
+
+
+
+ get_data_from_user():
+    # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
+    NFT_tokenID = input("Entrez le NFT_tokenID : ")
+    temperature = input("Entrez la température : ")
+    gps = input("Entrez le GPS : ")
+    date = input("Entrez la date : ")
+
+    # Créer un dictionnaire avec les données entrées par l'utilisateur
+    data = {
+        "NFT_tokenID": NFT_tokenID,
+        "temperature": temperature,
+        "gps": gps,
+        "date": date
+    }
+
+    return data
+
+if __name__ == '__main__':
+    try:
+        # Initialisation du module NFC PN532
+        pn532 = PN532_SPI(debug=False, reset=20, cs=4)
+
+        print('Module NFC PN532 NFC HAT trouvé.')
+
+        while True:
+            print("Attente de la détection du tag NFC...")
+            # Configuration pour détecter le tag NFC
+            pn532.SAM_configuration()
+
+            # Détection du tag NFC
+            uid = pn532.read_passive_target(timeout=15)
+            if uid is None:
+                print("Aucun tag NFC détecté après 15 secondes.")
+                while True:
+                    choix = input("Voulez-vous réessayer ? (yes/no) : ")
+                    if choix.lower() == "yes":
+                        print("Réessayer la détection du tag NFC...")
+                        break
+                    elif choix.lower() == "no":
+                        print("Arrêt du programme.")
+                        exit()
+                    else:
+                        print("Choix invalide. Veuillez répondre par 'yes' ou 'no'.")
+            else:
+                print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
+                print("Permission d'écriture autorisée ...")
+                # Demander à l'utilisateur d'entrer les données à écrire dans le tag NFC
+                data_to_write = get_data_from_user()
+
+                # Écrire dans le tag NFC
+                if write_to_tag(pn532, uid, data_to_write):
+                    break
+
+    except Exception as e:
+        print(e)
