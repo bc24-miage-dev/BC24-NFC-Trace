@@ -64,11 +64,11 @@ if __name__ == '__main__':
                 print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
                 print("Permission d'écriture autorisée ...")
 
-                # Demander à l'utilisateur d'entrer les données à écrire dans la carte RFID/NFC
-                data_to_write = get_data_from_user()
+                # Données à écrire sur la carte RFID/NFC
+                data_to_write = "NFT_tokenID".encode()
 
-                # Écrire sur la carte RFID/NFC
-                if write_to_tag(pn532, uid, data_to_write.encode()):
+                # Écrire sur la carte RFID/NFC à partir du bloc 4
+                if write_to_tag(pn532, uid, data_to_write):
                     print("Écriture réussie sur la carte RFID/NFC.")
 
                     # Lire à nouveau les données écrites pour vérification
