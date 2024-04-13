@@ -30,7 +30,7 @@ print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
 pn532.SAM_configuration()
 
 # Chemin du répertoire JSON
-JSON_DIRECTORY = "/json/"
+JSON_DIRECTORY = "json/"
 
 # Créer le répertoire JSON s'il n'existe pas
 if not os.path.exists(JSON_DIRECTORY):
