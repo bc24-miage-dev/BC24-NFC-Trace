@@ -4,7 +4,7 @@ from pn532 import PN532_SPI
 
 def write_to_tag(pn532, uid, data):
     try:
-        block_number = 4
+        block_number = 10
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         print("Chargement d'écriture des données dans le tag NFC...")
 
@@ -41,7 +41,8 @@ def read_from_tag(pn532, uid, block_number):
         return None
 
 def get_data_from_user():
-    data_to_write = input("Entrez les données à écrire sur la carte RFID/NFC : ")
+    print("Entrez les données à écrire dans le tag NFC (16 octets) :", end=" ")
+    data_to_write = input("NFT_tokenID : ")
     return data_to_write
 
 if __name__ == '__main__':
