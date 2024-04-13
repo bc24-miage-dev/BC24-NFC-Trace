@@ -63,8 +63,9 @@ def get_data_from_user():
     temperature = input("Température : ")
     gps = input("GPS : ")
     # date = input("Date : ")
-    return nft_token, temperature, gps, 
-    # date
+    return nft_token, temperature, gps
+     
+    #, date
 
 if __name__ == '__main__':
     try:
