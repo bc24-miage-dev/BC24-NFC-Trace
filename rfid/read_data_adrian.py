@@ -4,6 +4,7 @@ from pn532 import *
 import pygame
 import json
 import os
+import sys
 
 # Initialize Pygame
 pygame.init()
@@ -40,8 +41,8 @@ if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
 else:
     tag_data = []
 
-# Main loop
 try:
+    # Main loop
     running = True
     while running:
         # Event handling
@@ -126,7 +127,8 @@ try:
         display.fill((255, 255, 255))
         pygame.display.update()
 
-# Clean up
-finally:
+except KeyboardInterrupt:
+    print("Exiting program...")
     GPIO.cleanup()
     pygame.quit()
+    sys.exit(0)
