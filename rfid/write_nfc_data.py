@@ -73,7 +73,7 @@ if __name__ == '__main__':
                     print("Écriture réussie sur la carte RFID/NFC.")
 
                     # Lire à nouveau les données écrites pour vérification
-                    read_data = read_from_tag(pn532, uid, block_number=6)
+                    read_data = read_from_tag(pn532, uid, block_number=10)
                     if read_data is not None:
                         print("Données lues depuis la carte RFID/NFC :", read_data.decode())
                         break
