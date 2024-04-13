@@ -9,11 +9,17 @@ def write_to_tag(pn532, uid, data):
 
         nft_token, temperature, gps, date = data
 
-        # Assurer que les données font exactement 16 octets
-        nft_token_bytes = nft_token.ljust(16, b'\0')[:16]
-        temperature_bytes = temperature.ljust(16, b'\0')[:16]
-        gps_bytes = gps.ljust(16, b'\0')[:16]
-        date_bytes = date.ljust(16, b'\0')[:16]
+         # Assurer que les données font exactement 16 caractères unicode
+        nft_token_unicode = nft_token.ljust(16, ' ')
+        temperature_unicode = temperature.ljust(16, ' ')
+        gps_unicode = gps.ljust(16, ' ')
+        date_unicode = date.ljust(16, ' ')
+
+        # Convertir les données en bytes
+        nft_token_bytes = nft_token_unicode.encode('utf-8')
+        temperature_bytes = temperature_unicode.encode('utf-8')
+        gps_bytes = gps_unicode.encode('utf-8')
+        date_bytes = date_unicode.encode('utf-8')
 
         for block_number, data_bytes in zip(range(4, 8), [nft_token_bytes, temperature_bytes, gps_bytes, date_bytes]):
             print("Côté écriture : Authentification du bloc {}...".format(block_number))
