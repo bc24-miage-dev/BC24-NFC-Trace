@@ -40,7 +40,6 @@ if os.path.isfile('data.json') and os.stat('data.json').st_size > 0:
 else:
     tag_data = []
 
-
 # Main loop
 running = True
 while running:
@@ -61,19 +60,30 @@ while running:
 
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
-    block_data = []
-    for i in range(10,14):
+    token_id = ""
+    temperature = ""
+    gps = ""
+    other_data = ""
+
+    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "data"]):
         try:
             pn532.mifare_classic_authenticate_block(
-                uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
-            data = pn532.mifare_classic_read_block(i)
-            block_data.append(data.hex())  # Convert data to hex string
+                uid, block_number=10+i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
+            data = pn532.mifare_classic_read_block(10+i)
+            if i == 0:
+                token_id = data.hex()
+            elif i == 1:
+                temperature = data.hex()
+            elif i == 2:
+                gps = data.hex()
+            elif i == 3:
+                other_data = data.hex()
         except nfc.PN532Error as e:
             print(e.errmsg)
             break
 
     # Add tag data to list
-    tag_data.append({'uid': uid_hex, 'data': block_data})
+    tag_data.append({'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps, 'data': other_data})
 
     # Display tag data on screen
     display.fill((255, 255, 255))
@@ -91,12 +101,12 @@ while running:
     row_height = FONT_SIZE + 5
     col_width = 450
     num_cols = 2
-    for i, data in enumerate(block_data):
-        row = i // num_cols
-        col = i % num_cols
-        data_label = ' '.join(data[j:j+2] for j in range(0, len(data), 2))
+    for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "data"]):
+        data_label = block_name + ": " + tag_data[-1][block_name]
         label = FONT.render(data_label, True, (0, 0, 0))
         label_rect = label.get_rect()
+        row = i // num_cols
+        col = i % num_cols
         label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
         display.blit(label, label_rect)
 
@@ -117,4 +127,4 @@ while running:
 
 # Clean up
 GPIO.cleanup()
-pygame.quit()
+pygame
