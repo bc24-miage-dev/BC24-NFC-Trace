@@ -20,14 +20,24 @@ def write_to_tag(pn532, uid, data_token, data_date):
         pn532.mifare_classic_write_block(10, data_bytes_token)
         pn532.mifare_classic_write_block(14, data_bytes_date)
 
-        if pn532.mifare_classic_read_block(10) == data_bytes_token:
+        # Vérification de l'écriture dans le bloc 10
+        data_read = pn532.mifare_classic_read_block(10)
+        if data_read is None:
+            print('Côté écriture : Erreur lors de la lecture des données écrites dans le bloc 10.')
+            return False
+        elif data_read == data_bytes_token:
             print('Côté écriture : Écriture réussie sur le bloc 10.')
             return True
         else:
             print('Côté écriture : Erreur lors de la lecture des données écrites dans le bloc 10.')
             return False
 
-        if pn532.mifare_classic_read_block(14) == data_bytes_date:
+        # Vérification de l'écriture dans le bloc 14
+        data_read = pn532.mifare_classic_read_block(14)
+        if data_read is None:
+            print('Côté écriture : Erreur lors de la lecture des données écrites dans le bloc 14.')
+            return False
+        elif data_read == data_bytes_date:
             print('Côté écriture : Écriture réussie sur le bloc 14.')
             return True
         else:
