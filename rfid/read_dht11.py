@@ -1,53 +1,26 @@
-import RPi.GPIO as GPIO
+import Adafruit_DHT
 import time
+import RPi.GPIO as GPIO
 
-# Utiliser la numérotation des broches BCM
-GPIO.setmode(GPIO.BCM)
-
-# Définir la broche du capteur DHT11
+DHT_SENSOR = Adafruit_DHT.DHT11
 DHT_PIN = 11
 
-# Définir la fonction pour lire les données du capteur DHT11
-def read_dht11():
-    GPIO.setup(DHT_PIN, GPIO.OUT)
-    GPIO.output(DHT_PIN, GPIO.LOW)
-    time.sleep(0.02)
-    GPIO.output(DHT_PIN, GPIO.HIGH)
-    GPIO.setup(DHT_PIN, GPIO.IN)
+def read_dht_sensor():
+    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+    if humidity is not None and temperature is not None:
+        return humidity, temperature
+    else:
+        return -999, -999
 
-    while GPIO.input(DHT_PIN) == GPIO.LOW:
-        pass
-    while GPIO.input(DHT_PIN) == GPIO.HIGH:
-        pass
-
-    data = [0, 0, 0, 0, 0]
-    for i in range(40):
-        while GPIO.input(DHT_PIN) == GPIO.LOW:
-            pass
-        while GPIO.input(DHT_PIN) == GPIO.HIGH:
-            pass
-        data[i // 8] <<= 1
-        if GPIO.input(DHT_PIN) == GPIO.HIGH:
-            data[i // 8] |= 1
-
-    if data[0] + data[1] + data[2] + data[3] != data[4]:
-        return None, None
-
-    return data[0], data[2]
-
-def main():
+def loop():
     while True:
-        humidity, temperature = read_dht11()
-        if humidity is not None and temperature is not None:
-            print("Humidity: {:.1f}%  Temperature: {:.1f}°C".format(humidity, temperature))
-        else:
-            print("Failed to read data from DHT11 sensor")
-        time.sleep(5)
+        humidity, temperature = read_dht_sensor()
+        print("Humidity: {:.2f}%, \t Temperature: {:.2f}°C".format(humidity, temperature))
+        time.sleep(3)
 
 if __name__ == '__main__':
-    print('Program is starting ... ')
+    print("Program is starting...")
     try:
-        main()
+        loop()
     except KeyboardInterrupt:
         pass
-        GPIO.cleanup()

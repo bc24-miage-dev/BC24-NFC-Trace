@@ -62,7 +62,7 @@ while running:
     # Read data from all blocks
     key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
     block_data = []
-    for i in range(5,9):
+    for i in range(10,14):
         try:
             pn532.mifare_classic_authenticate_block(
                 uid, block_number=i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
