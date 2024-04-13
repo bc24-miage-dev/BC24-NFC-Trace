@@ -4,15 +4,21 @@ from pn532 import PN532_SPI
 
 def write_to_tag(pn532, uid, data):
     try:
-        block_number = 6
-        key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
-        print("Chargement d'écriture des données dans le tag NFC...")
+        block_number = 6  # Bloc 6 à écrire
+        auth_block_number = 7  # Bloc 7 pour l'authentification
+
+        # Assurer que les six premiers octets du bloc 7 sont 0xFF
+        pn532.mifare_classic_authenticate_block(uid, block_number=auth_block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=b'\xFF\xFF\xFF\xFF\xFF\xFF')
+        data_block_7 = pn532.mifare_classic_read_block(auth_block_number)
+        if data_block_7[:6] != b'\xFF\xFF\xFF\xFF\xFF\xFF':
+            print("Les six premiers octets du bloc 7 ne sont pas 0xFF. Impossible d'écrire sur le bloc 6.")
+            return False
 
         # Assurer que les données font exactement 16 octets
         data_bytes = data.ljust(16, b'\0')[:16]
 
         print("Côté écriture : Authentification du bloc...")
-        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
+        pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=b'\xFF\xFF\xFF\xFF\xFF\xFF')
         
         print("Côté écriture : Écriture des données dans le bloc...")
         pn532.mifare_classic_write_block(block_number, data_bytes)
@@ -25,6 +31,7 @@ def write_to_tag(pn532, uid, data):
     except Exception as e:
         print('Côté écriture : Erreur lors de l\'écriture dans le tag NFC :', e)
         return False
+
 
 def read_from_tag(pn532, uid, block_number):
     try:
