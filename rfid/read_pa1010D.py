@@ -1,28 +1,49 @@
-#!/usr/bin/env python3
+import serial
 import time
 
-from pa1010d import PA1010D
+class GPS:
+    def __init__(self, port='/dev/serial0', baudrate=9600):
+        self.ser = serial.Serial(port, baudrate, timeout=1)
 
-def main():
-    gps = PA1010D()
+    def read_data(self):
+        data = {}
+        while True:
+            line = self.ser.readline().decode('utf-8').strip()
+            if not line:
+                continue
+            if line[0:6] == '$GPRMC':
+                values = line.split(',')
+                if len(values) >= 10 and values[2] == 'A':
+                    data['timestamp'] = values[1]
+                    data['latitude'] = values[3] + values[4]/60.0
+                    data['longitude'] = values[5] + values[6]/60.0
+                    data['speed_over_ground'] = values[7]
+                    data['course_over_ground'] = values[8]
+                    data['date'] = values[9]
+                    return data
+            time.sleep(0.1)
+        return None
 
+def loop():
+    gps = GPS()
+    sum_cnt = 0
+    ok_cnt = 0
     while True:
-        result = gps.update()
-        if result:
-            print("""
-Timestamps : {timestamp}
-Latitude : {latitude}
-Longitude : {longitude}
-Altitude : {altitude}
-Number of satellites : {num_sats}
-GPS quality : {gps_qual}
-Speed over ground : {speed_over_ground}
-Mode fix type : {mode_fix_type}
-PDOP : {pdop}
-VDOP : {vdop}
-HDOP : {hdop}
-""".format(**gps.data))
-        time.sleep(1.0)
+        sum_cnt += 1
+        data = gps.read_data()
+        if data is not None:
+            ok_cnt += 1
+        ok_rate = 100.0 * ok_cnt / sum_cnt
+        print(f"sumCnt : {sum_cnt}, \t okRate : {ok_rate:.2f}% ")
+        if data is not None:
+            print("Status: 0, \t Timestamp: {}, \t Latitude: {}, \t Longitude: {}".format(data["timestamp"], data["latitude"], data["longitude"]))
+        else:
+            print("Status: -1, \t Timestamp: n/a, \t Latitude: n/a, \t Longitude: n/a")
+        time.sleep(1)
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    print('Program is starting...')
+    try:
+        loop()
+    except KeyboardInterrupt:
+        pass
