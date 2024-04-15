@@ -26,7 +26,7 @@ def write_to_tag(pn532, uid, data):
         print('Côté écriture : Erreur lors de l\'écriture dans le tag NFC :', e)
         return False
 
-def read_from_tag(pn532, uid, 10):
+def read_from_tag(pn532, uid):
     try:
         print("Côté lecture : Authentification du bloc...")
         pn532.mifare_classic_authenticate_block(uid, block_number=10, key_number=nfc.MIFARE_CMD_AUTH_A, key=b'\xFF\xFF\xFF\xFF\xFF\xFF')
