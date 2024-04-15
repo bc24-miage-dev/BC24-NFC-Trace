@@ -1,7 +1,7 @@
 import bme680
 import time
 import json
-from temperature_nfc import write_temperature_to_tag, read_temperature_from_tag, get_temperature
+from write_temperature import write_to_tag, read_from_tag, get_temperature
 
 class BME680Sensor:
     def __init__(self):
@@ -30,7 +30,7 @@ def loop(pn532, uid):
             print("Status: 0, \t Temperature: %.2f" % temperature)
 
             # Écrire la température dans le tag NFC
-            if write_temperature_to_tag(pn532, uid, temperature):
+            if write_to_tag(pn532, uid, temperature):
                 print("Température écrite avec succès dans le tag NFC.")
             else:
                 print("Échec de l'écriture de la température dans le tag NFC.")
