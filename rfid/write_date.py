@@ -38,7 +38,7 @@ def read_from_tag(pn532, uid):
         data_read_date = pn532.mifare_classic_read_block(13)
 
         # Convertir les données hexadécimales en caractères ASCII
-        data_read_date_ascii = data_read_date.decode('utf-8')
+        data_read_date_ascii = data_read_date.decode('utf-8').strip('\x00')
 
         print('Côté lecture : Lecture réussie sur le bloc 13 : %r' % data_read_date_ascii)
         return data_read_date_ascii

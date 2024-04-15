@@ -2,14 +2,14 @@ import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 from pn532 import PN532_SPI
 
-def write_to_tag(pn532, uid, data):
+def write_to_tag(pn532, uid, data_token):
     try:
         block_number = 10
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         print("Chargement d'écriture des données dans le tag NFC...")
 
         # Assurer que les données font exactement 16 octets
-        data_bytes = data.ljust(16, b'\0')[:16]
+        data_bytes = data_token.ljust(16, b'\0')[:16]
 
         print("Côté écriture : Authentification du bloc...")
         pn532.mifare_classic_authenticate_block(uid, block_number=10, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
