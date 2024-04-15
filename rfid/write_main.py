@@ -2,9 +2,9 @@ import datetime
 import RPi.GPIO as GPIO
 import write_date  # Importer le fichier contenant les fonctions pour écrire la date
 import write_tokenId    # Importer le fichier contenant les fonctions pour écrire l'ID de token NFC
-import write_temperature    # Importer le fichier contenant les fonctions pour écrire la température
+# import write_temperature    # Importer le fichier contenant les fonctions pour écrire la température
 
-from read_temperature import BME680Sensor
+# from read_temperature import BME680Sensor
 from pn532 import PN532_SPI
 
 if __name__ == '__main__':
