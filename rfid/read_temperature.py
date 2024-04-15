@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-
 import bme680
 import time
 import json
+from temperature_nfc import write_temperature_to_tag, read_temperature_from_tag, get_temperature
 
 class BME680Sensor:
     def __init__(self):
@@ -16,33 +15,26 @@ class BME680Sensor:
         self.sensor.set_temperature_oversample(bme680.OS_8X)
         self.sensor.set_filter(bme680.FILTER_SIZE_3)
 
-    def read_temperature(self):
-        if self.sensor.get_sensor_data():
-            return self.sensor.data.temperature
-        else:
-            return None
-
-def loop():
+def loop(pn532, uid):
     bme = BME680Sensor()
     sumCnt = 0
     okCnt = 0
     while True:
         sumCnt += 1
-        data = bme.read_temperature()
-        if data is not None:
+        temperature = get_temperature(bme.sensor)
+        if temperature is not None:
             okCnt += 1
         okRate = 100.0 * okCnt / sumCnt
         print("sumCnt : %d, \t okRate : %.2f%% " % (sumCnt, okRate))
-        if data is not None:
-            temperature = data
-            print("Status: 0, \t Temperature: %.2f " % (temperature))
+        if temperature is not None:
+            print("Status: 0, \t Temperature: %.2f" % temperature)
+
+            # Écrire la température dans le tag NFC
+            if write_temperature_to_tag(pn532, uid, temperature):
+                print("Température écrite avec succès dans le tag NFC.")
+            else:
+                print("Échec de l'écriture de la température dans le tag NFC.")
+
         else:
             print("Status: -1, \t Temperature: n/a")
         time.sleep(3)
-
-if __name__ == '__main__':
-    print('Program is starting...')
-    try:
-        loop()
-    except KeyboardInterrupt:
-        pass
