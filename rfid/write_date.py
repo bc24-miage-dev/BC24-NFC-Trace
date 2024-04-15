@@ -9,8 +9,8 @@ def write_to_tag(pn532, uid, data_date):
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         print("Chargement d'écriture des données dans le tag NFC...")
 
-        # Assurer que les données font exactement 16 octets
-        data_bytes_date = data_date.ljust(16, b'\0')[:16]
+        # Assurer que les données font exactement 16 octets et encoder en 'utf-8'
+        data_bytes_date = data_date.encode('utf-8').ljust(16, b'\0')[:16]
 
         print("Côté écriture : Authentification du bloc...")
         pn532.mifare_classic_authenticate_block(uid, block_number=13, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
@@ -28,6 +28,7 @@ def write_to_tag(pn532, uid, data_date):
         print('Côté écriture : Erreur lors de l\'écriture dans le tag NFC :', e)
         return False
 
+
 def read_from_tag(pn532, uid):
     try:
         print("Côté lecture : Authentification du bloc...")
@@ -36,11 +37,15 @@ def read_from_tag(pn532, uid):
         print("Côté lecture : Lecture des données du bloc...")
         data_read_date = pn532.mifare_classic_read_block(13)
 
-        print('Côté lecture : Lecture réussie sur le bloc 13 : %r' % data_read_date)
-        return data_read_date
+        # Convertir les données hexadécimales en caractères ASCII
+        data_read_date_ascii = data_read_date.decode('utf-8')
+
+        print('Côté lecture : Lecture réussie sur le bloc 13 : %r' % data_read_date_ascii)
+        return data_read_date_ascii
     except Exception as e:
         print('Erreur lors de la lecture du tag NFC :', e)
         return None
+
 
 def get_date():
     write_date = datetime.datetime.now().strftime('%Y-%m-%d')
