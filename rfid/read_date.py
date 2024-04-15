@@ -1,4 +1,6 @@
 import datetime
 
 def get_date():
-    return datetime.datetime.now().strftime('%Y-%m-%d')
+    date_now = datetime.datetime.now().strftime('%Y-%m-%d')
+    print("Date actuel : "+date_now)
+    return date_now
