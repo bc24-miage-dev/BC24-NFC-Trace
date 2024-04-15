@@ -1,5 +1,3 @@
-import RPi.GPIO as GPIO
-
 from pn532 import PN532_SPI
 from write_tokenId import WriteTokenID
 from write_date import WriteDate

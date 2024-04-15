@@ -1,4 +1,3 @@
-import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 from pn532 import PN532_SPI
 
@@ -14,7 +13,7 @@ class WriteTokenID:
             data_token = input("Entrez l'ID de token NFC à écrire dans le tag NFC (16 octets) : NFT_tokenID : ")
 
             # Assurer que les données font exactement 16 octets
-            data_bytes_token = data_token.ljust(16, b'\0')[:16]
+            data_bytes_token = data_token.ljust(16, u'\0')[:16]
 
             print("Côté écriture : Authentification du bloc...")
             pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=PN532_SPI.MIFARE_CMD_AUTH_A, key=key_a)
@@ -30,3 +29,18 @@ class WriteTokenID:
         except Exception as e:
             print('Côté écriture : Erreur lors de l\'écriture dans le tag NFC :', e)
             return False
+    
+    @staticmethod
+    def read_from_tag(pn532, uid):
+        try:
+            print("Côté lecture : Authentification du bloc...")
+            pn532.mifare_classic_authenticate_block(uid, block_number=10, key_number=PN532_SPI.MIFARE_CMD_AUTH_A, key=b'\xFF\xFF\xFF\xFF\xFF\xFF')
+
+            print("Côté lecture : Lecture des données du bloc...")
+            data_read_token = pn532.mifare_classic_read_block(10)
+
+            print('Côté lecture : Lecture réussie sur le bloc 10 : %r' % data_read_token)
+            return data_read_token
+        except Exception as e:
+            print('Erreur lors de la lecture du tag NFC :', e)
+            return None
