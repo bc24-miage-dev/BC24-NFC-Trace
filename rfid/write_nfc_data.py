@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
+import datetime
 from pn532 import PN532_SPI
 
 def write_to_tag(pn532, uid, data_token, data_date):
