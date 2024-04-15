@@ -1,9 +1,8 @@
-import datetime
 import RPi.GPIO as GPIO
-import read_date  # Importer le fichier contenant les fonctions pour écrire la date
-import write_nfc_token    # Importer le fichier contenant les fonctions pour écrire l'ID de token NFC
 
 from pn532 import PN532_SPI
+from write_token_id import WriteTokenID
+from write_date import WriteDate
 
 if __name__ == '__main__':
     try:
@@ -25,33 +24,29 @@ if __name__ == '__main__':
                 print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
                 print("Permission d'écriture autorisée ...")
 
-                # Demander à l'utilisateur d'entrer les données à écrire dans la carte RFID/NFC
-                data_read_date = datetime.datetime.now().strftime('%Y-%m-%d')
-                data_to_write = input("Entrez les données à écrire dans le tag NFC (16 octets) : NFT_tokenID : ")
-
                 # Écrire la date sur la carte RFID/NFC
-                if read_date.write_to_tag(pn532, uid, data_read_date.encode()):
+                if WriteDate.write_to_tag(pn532, uid):
                     print("Écriture de la date réussie sur la carte RFID/NFC.")
                 else:
                     print("Échec de l'écriture de la date sur la carte RFID/NFC.")
 
                 # Écrire l'ID de token NFC sur la carte RFID/NFC
-                if write_nfc_token.write_to_tag(pn532, uid, data_to_write.encode()):
+                if WriteTokenID.write_to_tag(pn532, uid):
                     print("Écriture de l'ID de token NFC réussie sur la carte RFID/NFC.")
                 else:
                     print("Échec de l'écriture de l'ID de token NFC sur la carte RFID/NFC.")
 
                 # Lire à nouveau les données écrites pour vérification
-                read_date = read_date.read_from_tag(pn532, uid)
-                read_id = write_nfc_token.read_from_tag(pn532, uid)
+                read_date = WriteDate.read_from_tag(pn532, uid)
+                read_token = WriteTokenID.read_from_tag(pn532, uid)
 
                 if read_date is not None:
                     print("Date lue depuis la carte RFID/NFC :", read_date.decode())
                 else:
                     print("Échec de la lecture de la date depuis la carte RFID/NFC.")
 
-                if read_id is not None:
-                    print("ID de token NFC lu depuis la carte RFID/NFC :", read_id.decode())
+                if read_token is not None:
+                    print("ID de token NFC lu depuis la carte RFID/NFC :", read_token.decode())
                 else:
                     print("Échec de la lecture de l'ID de token NFC depuis la carte RFID/NFC.")
 
