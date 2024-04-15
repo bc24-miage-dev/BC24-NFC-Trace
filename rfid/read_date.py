@@ -4,13 +4,12 @@ import datetime
 
 from pn532 import PN532_SPI
 
-def write_to_tag(pn532, uid, data_token, data_date):
+def write_to_tag(pn532, uid, data_date):
     try:
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         print("Chargement d'écriture des données dans le tag NFC...")
 
         # Assurer que les données font exactement 16 octets
-        data_bytes_token = data_token.ljust(16, b'\0')[:16]
         data_bytes_date = data_date.ljust(16, b'\0')[:16]
 
         print("Côté écriture : Authentification du bloc...")
