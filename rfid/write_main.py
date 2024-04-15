@@ -4,6 +4,7 @@ import write_date  # Importer le fichier contenant les fonctions pour écrire la
 import write_tokenId    # Importer le fichier contenant les fonctions pour écrire l'ID de token NFC
 import write_temperature    # Importer le fichier contenant les fonctions pour écrire la température
 
+from read_temperature import BME680Sensor
 from pn532 import PN532_SPI
 
 if __name__ == '__main__':
@@ -29,8 +30,12 @@ if __name__ == '__main__':
                 # Données à écrire dans la carte RFID/NFC
                 data_token = write_tokenId.get_tokenId()
                 data_date = write_date.get_date()
-                data_temperature = write_temperature.get_temperature(bme_sensor)
 
+                # Créez une instance de BME680Sensor et récupérez la température
+                bme_sensor = BME680Sensor()
+                # Utilisez directement la fonction importée
+                data_temperature = write_temperature.get_temperature(bme_sensor.sensor)
+                
                 # Écrire l'ID de token NFC sur la carte RFID/NFC
                 if write_tokenId.write_to_tag(pn532, uid, data_token.encode()):
                     print("Écriture de l'ID de token NFC réussie sur la carte RFID/NFC.")
