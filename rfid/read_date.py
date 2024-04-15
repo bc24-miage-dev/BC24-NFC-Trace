@@ -66,7 +66,7 @@ if __name__ == '__main__':
                 print("Tag NFC détecté avec l'UID suivant : ", [hex(i) for i in uid])
                 print("Permission d'écriture autorisée ...")
 
-                data_write_date = get_date()
+                data_write_date = input("Entrez la date à écrire sur la carte RFID/NFC (format : YYYY-MM-DD) : ")
 
                 # Écrire sur la carte RFID/NFC
                 if write_to_tag(pn532, uid, data_write_date.encode()):
