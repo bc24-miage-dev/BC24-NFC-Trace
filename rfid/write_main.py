@@ -36,7 +36,7 @@ if __name__ == '__main__':
                     print("Échec de l'écriture de l'ID de token NFC sur la carte RFID/NFC.")
 
                 # Écrire la date sur la carte RFID/NFC
-                if write_date.write_to_tag(pn532, uid, data_date.encode()):
+                if write_date.write_to_tag(pn532, uid, data_date()):
                     print("Écriture de la date réussie sur la carte RFID/NFC.")
                 else:
                     print("Échec de l'écriture de la date sur la carte RFID/NFC.")
