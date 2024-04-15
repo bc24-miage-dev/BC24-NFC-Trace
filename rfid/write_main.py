@@ -58,7 +58,7 @@ if __name__ == '__main__':
                 break
 
             else:
-                print("Aucun tag NFC détecté après 15 secondes.")
+                print("Aucun tag NFC détecté après quelques secondes.")
                 while True:
                     choix = input("Voulez-vous réessayer ? (yes/no) : ")
                     if choix.lower() == "yes":
