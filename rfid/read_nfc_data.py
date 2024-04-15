@@ -68,11 +68,11 @@ try:
                     uid, block_number=10+i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
                 data = pn532.mifare_classic_read_block(10+i)
                 if i == 0:
-                    token_id = data.hex()
+                    token_id = data.decode('utf-8').strip('\x00')
                 elif i == 1:
-                    temperature = data.hex()
+                    temperature = data.decode('utf-8').strip('\x00')
                 elif i == 2:
-                    gps = data.hex()
+                    gps = data.decode('utf-8').strip('\x00')
                 elif i == 3:
                     date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
