@@ -30,13 +30,13 @@ if __name__ == '__main__':
                 data_token = write_tokenId.get_tokenId()
 
                 # Écrire la date sur la carte RFID/NFC
-                if write_date.write_to_tag(pn532, uid, data_write_date.encode()):
+                if write_date.write_to_tag(pn532, uid, data_date.encode()):
                     print("Écriture de la date réussie sur la carte RFID/NFC.")
                 else:
                     print("Échec de l'écriture de la date sur la carte RFID/NFC.")
 
                 # Écrire l'ID de token NFC sur la carte RFID/NFC
-                if write_tokenId.write_to_tag(pn532, uid, data_to_write.encode()):
+                if write_tokenId.write_to_tag(pn532, uid, data_token.encode()):
                     print("Écriture de l'ID de token NFC réussie sur la carte RFID/NFC.")
                 else:
                     print("Échec de l'écriture de l'ID de token NFC sur la carte RFID/NFC.")
