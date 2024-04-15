@@ -70,7 +70,7 @@ try:
                 if i == 0:
                     token_id = data.decode('utf-8').strip('\x00')
                 elif i == 1:
-                    temperature = data.decode('utf-8').strip('\x00')
+                    temperature = data.
                 elif i == 2:
                     gps = data.decode('utf-8').strip('\x00')
                 elif i == 3:
