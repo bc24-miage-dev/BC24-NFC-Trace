@@ -40,6 +40,16 @@ def loop():
             print("Status: -1, \t Temperature: n/a")
         time.sleep(3)
 
+def get_temperature():
+    bme = BME680Sensor()
+    data = bme.read_temperature()
+    if data is not None:
+        temperature = data
+        #ecris ton code ici pour envoyer dans ton fichier
+        return temperature
+    else:
+        return None
+
 if __name__ == '__main__':
     print('Program is starting...')
     try:
