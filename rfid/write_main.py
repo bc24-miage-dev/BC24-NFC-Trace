@@ -51,7 +51,7 @@ if __name__ == '__main__':
                     print("Échec de la lecture de l'ID de token NFC depuis la carte RFID/NFC.")
 
                 if read_date is not None:
-                    print("Date lue depuis la carte RFID/NFC :", read_date.decode())
+                    print("Date lue depuis la carte RFID/NFC :", read_date())
                 else:
                     print("Échec de la lecture de la date depuis la carte RFID/NFC.")
 
