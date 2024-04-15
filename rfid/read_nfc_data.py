@@ -74,7 +74,7 @@ try:
                 elif i == 2:
                     gps = data.hex()
                 elif i == 3:
-                    date = data.hex()
+                    date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
                 print(e.errmsg)
                 break
