@@ -1,7 +1,7 @@
 import datetime
 import RPi.GPIO as GPIO
 import write_date  # Importer le fichier contenant les fonctions pour écrire la date
-import write_nfc_token    # Importer le fichier contenant les fonctions pour écrire l'ID de token NFC
+import write_tokenId    # Importer le fichier contenant les fonctions pour écrire l'ID de token NFC
 
 from pn532 import PN532_SPI
 
