@@ -87,10 +87,15 @@ try:
                         gps_data["latitude"] = gps_parts[1]
                         gps_data["altitude"] = gps_parts[2]
                     else:
+                        # Afficher un message d'erreur sans les chiffres
+                        gps_error_message = "gps : {\n" \
+                                            "    longitude » : « xxx ,\n" \
+                                            "    latitude  :  yyy ,\n" \
+                                            "    altitude  :  zzz \n" \
+                                            "}\n"
                         print("Erreur: Les données GPS ne sont pas correctement formatées.")
-                        gps_data["longitude"] = "xxx"
-                        gps_data["latitude"] = "yyy"
-                        gps_data["altitude"] = "zzz"
+                        print(gps_error_message)
+                        gps_data["error"] = "Format incorrect"
                 elif block_name == "date": 
                     date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
