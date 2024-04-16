@@ -60,7 +60,7 @@ try:
         token_id = ""
         temperature = ""
         gps_data = {"longitude": "", "latitude": "", "altitude": ""}
-        default_gps_data = {"longitude": "non trouvé", "latitude": "non trouvé", "altitude": "non trouvé"}
+        default_gps_data = {"longitude": "non trouve", "latitude": "non trouve", "altitude": "non trouve"}
         date = ""
 
         # Numéros de bloc pour des données spécifiques
