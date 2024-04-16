@@ -84,3 +84,20 @@ def read_temperature_from_tag(pn532, uid):
     else:
         print("Erreur lors de la lecture de la température depuis le tag NFC")
         return None
+
+# Créer une instance de la classe PN532 pour communiquer avec le lecteur NFC
+pn532 = PN532_SPI(debug=False, reset=17, cs=0)
+
+# Vérifier la version du firmware du lecteur NFC
+ic, ver, rev, support = pn532.get_firmware_version()
+if not (ic == 0x14 and ver == 0x01 and rev == 0x16):
+    print("Erreur : version du firmware incorrecte")
+    exit()
+
+# Écrire la température dans le tag NFC
+uid = (0x4, 0xe, 0x10, 0x1) # Remplacez par l'UID de votre tag NFC
+write_temperature_to_tag(pn532, uid)
+
+# Lire la température depuis le tag NFC
+temperature = read_temperature_from_tag(pn532, uid)
+print("Température :", temperature)
