@@ -59,7 +59,7 @@ try:
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         token_id = ""
         temperature = ""
-        gps = ""
+        gps_data = {"longitude": "", "latitude": "", "altitude": ""}
         date = ""
 
         # Block numbers for specific data
@@ -80,7 +80,11 @@ try:
                 elif block_name == "temperature":
                     temperature = data.hex()
                 elif block_name == "gps":
-                    gps = data.decode('utf-8').strip('\x00')
+                    # Parse GPS data
+                    gps_parts = data.decode('utf-8').strip('\x00').split(',')
+                    gps_data["longitude"] = gps_parts[0]
+                    gps_data["latitude"] = gps_parts[1]
+                    gps_data["altitude"] = gps_parts[2]
                 elif block_name == "date":
                     date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
@@ -88,7 +92,7 @@ try:
                 break
 
         # Add tag data to list
-        tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps, 'date': date}
+        tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps_data, 'date': date}
 
         # Display tag data on screen
         display.fill((255, 255, 255))
@@ -96,19 +100,23 @@ try:
         display.blit(label, (50, 50))
 
         # Draw table header
-        header_font = pygame.font.SysFont('Arial', FONT_SIZE * 2)
-        header_label = header_font.render('Block', True, (0, 0, 0))
-        header_rect = header_label.get_rect()
-        header_rect.topleft = (50, 100)
-        display.blit(header_label, header_rect)
+        # ...
 
         # Draw table data
         row_height = FONT_SIZE + 5
         col_width = 450
         num_cols = 2
         for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
-            data_label = block_name + ": " + tag_data[block_name]
-            label = FONT.render(data_label, True, (0, 0, 0))
+            if block_name == "gps":
+                gps_label = "gps: {\n" \
+                            "   \"longitude\": \"" + tag_data[block_name]["longitude"] + "\",\n" \
+                            "   \"latitude\": \"" + tag_data[block_name]["latitude"] + "\",\n" \
+                            "   \"altitude\": \"" + tag_data[block_name]["altitude"] + "\"\n" \
+                            "}\n"
+                label = FONT.render(gps_label, True, (0, 0, 0))
+            else:
+                data_label = block_name + ": " + tag_data[block_name]
+                label = FONT.render(data_label, True, (0, 0, 0))
             label_rect = label.get_rect()
             row = i // num_cols
             col = i % num_cols
