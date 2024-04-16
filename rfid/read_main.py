@@ -82,10 +82,16 @@ try:
                 elif block_name == "gps":
                     # Parse GPS data
                     gps_parts = data.decode('utf-8').strip('\x00').split(',')
-                    gps_data["longitude"] = gps_parts[0]
-                    gps_data["latitude"] = gps_parts[1]
-                    gps_data["altitude"] = gps_parts[2]
-                elif block_name == "date":
+                    if len(gps_parts) >= 3:  # Vérifier qu'il y a au moins 3 éléments
+                        gps_data["longitude"] = gps_parts[0]
+                        gps_data["latitude"] = gps_parts[1]
+                        gps_data["altitude"] = gps_parts[2]
+                    else:
+                        print("Erreur: Les données GPS ne sont pas correctement formatées.")
+                        gps_data["longitude"] = "xxx"
+                        gps_data["latitude"] = "yyy"
+                        gps_data["altitude"] = "zzz"
+                elif block_name == "date": 
                     date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
                 print(e.errmsg)
