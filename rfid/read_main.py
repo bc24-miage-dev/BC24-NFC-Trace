@@ -112,32 +112,21 @@ try:
         # Draw table data
         row_height = FONT_SIZE + 5
         col_width = 450
-        num_cols = 2
+        num_cols = 1
         for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
             if block_name == "gps":
-                longitude_label = FONT.render("longitude: " + gps_data["longitude"], True, (0, 0, 0))
-                latitude_label = FONT.render("latitude: " + gps_data["latitude"], True, (0, 0, 0))
-                altitude_label = FONT.render("altitude: " + gps_data["altitude"], True, (0, 0, 0))
-
-                longitude_rect = longitude_label.get_rect()
-                latitude_rect = latitude_label.get_rect()
-                altitude_rect = altitude_label.get_rect()
-
-                longitude_rect.topleft = (150 + col * col_width, 130 + row * row_height)
-                latitude_rect.topleft = (150 + col * col_width, 150 + row * row_height)
-                altitude_rect.topleft = (150 + col * col_width, 170 + row * row_height)
-
-                display.blit(longitude_label, longitude_rect)
-                display.blit(latitude_label, latitude_rect)
-                display.blit(altitude_label, altitude_rect)
+                data_label = block_name + ": {"
+                data_label += "longitude: " + gps_data["longitude"] + ", "
+                data_label += "latitude: " + gps_data["latitude"] + ", "
+                data_label += "altitude: " + gps_data["altitude"] + "}"
             else:
                 data_label = block_name + ": " + tag_data[block_name]
-                label = FONT.render(data_label, True, (0, 0, 0))
-                label_rect = label.get_rect()
-                row = i // num_cols
-                col = i % num_cols
-                label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
-                display.blit(label, label_rect)
+            label = FONT.render(data_label, True, (0, 0, 0))
+            label_rect = label.get_rect()
+            row = i
+            col = 0
+            label_rect.topleft = (150 + col * col_width, 130 + row * row_height)
+            display.blit(label, label_rect)
 
         pygame.display.update()
 
