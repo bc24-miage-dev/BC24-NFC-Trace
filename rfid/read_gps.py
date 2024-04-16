@@ -12,9 +12,11 @@ class GPS:
         if result:
             data = {
                 "timestamp": self.gps.data["timestamp"],
-                "latitude": self.gps.data["latitude"],
-                "longitude": self.gps.data["longitude"],
-                "altitude": self.gps.data["altitude"],
+                "position": {
+                    "latitude": self.gps.data["latitude"],
+                    "longitude": self.gps.data["longitude"],
+                    "altitude": self.gps.data["altitude"]
+                },
                 "num_sats": self.gps.data["num_sats"],
                 "gps_qual": self.gps.data["gps_qual"],
                 "speed_over_ground": self.gps.data["speed_over_ground"],
@@ -39,9 +41,10 @@ def loop():
         ok_rate = 100.0 * ok_cnt / sum_cnt
         print(f"sumCnt : {sum_cnt}, \t okRate : {ok_rate:.2f}% ")
         if data is not None:
-            print("Status: 0, \t Timestamp: {}, \t Latitude: {}, \t Longitude: {}".format(data["timestamp"], data["latitude"], data["longitude"]))
+            position = data["position"]
+            print("Status: 0, \t Timestamp: {}, \t Latitude: {}, \t Longitude: {}, \t Altitude: {}".format(data["timestamp"], position["latitude"], position["longitude"], position["altitude"]))
         else:
-            print("Status: -1, \t Timestamp: n/a, \t Latitude: n/a, \t Longitude: n/a")
+            print("Status: -1, \t Timestamp: n/a, \t Latitude: n/a, \t Longitude: n/a, \t Altitude: n/a")
         time.sleep(1)
 
 if __name__ == '__main__':
