@@ -60,6 +60,7 @@ try:
         token_id = ""
         temperature = ""
         gps_data = {"longitude": "", "latitude": "", "altitude": ""}
+        default_gps_data = {"longitude": "not found", "latitude": "not found", "altitude": "not found"}
         date = ""
 
         # Block numbers for specific data
@@ -80,23 +81,14 @@ try:
                 elif block_name == "temperature":
                     temperature = data.hex()
                 elif block_name == "gps":
-                    # Parse GPS data
-                    gps_parts = data.decode('utf-8').strip('\x00').split(',')
-                    if len(gps_parts) >= 3:  # Vérifier qu'il y a au moins 3 éléments
-                        gps_data["longitude"] = gps_parts[0]
-                        gps_data["latitude"] = gps_parts[1]
-                        gps_data["altitude"] = gps_parts[2]
+                    gps_data_list = data.decode('utf-8').strip('\x00').split(',')
+                    if len(gps_data_list) == 3:
+                        gps_data["longitude"] = gps_data_list[0]
+                        gps_data["latitude"] = gps_data_list[1]
+                        gps_data["altitude"] = gps_data_list[2]
                     else:
-                        # Afficher un message d'erreur sans les chiffres
-                        gps_error_message = "gps : {\n" \
-                                            "    longitude » : « xxx ,\n" \
-                                            "    latitude  :  yyy ,\n" \
-                                            "    altitude  :  zzz \n" \
-                                            "}\n"
-                        print("Erreur: Les données GPS ne sont pas correctement formatées.")
-                        print(gps_error_message)
-                        gps_data["error"] = "Format incorrect"
-                elif block_name == "date": 
+                        gps_data = default_gps_data
+                elif block_name == "date":
                     date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
                 print(e.errmsg)
@@ -111,7 +103,11 @@ try:
         display.blit(label, (50, 50))
 
         # Draw table header
-        # ...
+        header_font = pygame.font.SysFont('Arial', FONT_SIZE * 2)
+        header_label = header_font.render('Block', True, (0, 0, 0))
+        header_rect = header_label.get_rect()
+        header_rect.topleft = (50, 100)
+        display.blit(header_label, header_rect)
 
         # Draw table data
         row_height = FONT_SIZE + 5
@@ -119,15 +115,13 @@ try:
         num_cols = 2
         for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
             if block_name == "gps":
-                gps_label = "gps: {\n" \
-                            "   \"longitude\": \"" + tag_data[block_name]["longitude"] + "\",\n" \
-                            "   \"latitude\": \"" + tag_data[block_name]["latitude"] + "\",\n" \
-                            "   \"altitude\": \"" + tag_data[block_name]["altitude"] + "\"\n" \
-                            "}\n"
-                label = FONT.render(gps_label, True, (0, 0, 0))
+                data_label = block_name + ": {"
+                data_label += "longitude: " + gps_data["longitude"] + ", "
+                data_label += "latitude: " + gps_data["latitude"] + ", "
+                data_label += "altitude: " + gps_data["altitude"] + "}"
             else:
                 data_label = block_name + ": " + tag_data[block_name]
-                label = FONT.render(data_label, True, (0, 0, 0))
+            label = FONT.render(data_label, True, (0, 0, 0))
             label_rect = label.get_rect()
             row = i // num_cols
             col = i % num_cols
