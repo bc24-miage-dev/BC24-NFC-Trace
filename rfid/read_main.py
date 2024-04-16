@@ -10,8 +10,8 @@ import sys
 pygame.init()
 
 # Set up the display
-DISPLAY_WIDTH = 1080
-DISPLAY_HEIGHT = 850
+DISPLAY_WIDTH = 720
+DISPLAY_HEIGHT = 500
 display = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
 pygame.display.set_caption('NFC Tag Reader')
 
