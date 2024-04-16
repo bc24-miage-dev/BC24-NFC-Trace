@@ -87,10 +87,11 @@ def read_temperature_from_tag(pn532, uid):
 
 if __name__ == '__main__':
     # Créer une instance de la classe PN532 pour communiquer avec le lecteur NFC
-    pn532 = PN532_SPI(debug=False, reset=17, cs=0)
+    pn532 = PN532_SPI(debug=False, reset=20, cs=4)
 
     # Vérifier la version du firmware du lecteur NFC
     ic, ver, rev, support = pn532.get_firmware_version()
+    print('Module NFC PN532 trouvé avec la version de firmware : {0}.{1}'.format(ver, rev))
     if not (ic == 0x14 and ver == 0x01 and rev == 0x16):
         print("Erreur : version du firmware incorrecte")
         exit()
