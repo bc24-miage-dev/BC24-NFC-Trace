@@ -53,7 +53,11 @@ def get_temperature():
 if __name__ == '__main__':
     print('Program is starting...')
     try:
-        # loop()
-        get_temperature()
+        temperature = get_temperature()
+        if temperature is not None:
+            print("Temperature: %.2f" % temperature)
+        else:
+            print("Error reading temperature")
     except KeyboardInterrupt:
         pass
+
