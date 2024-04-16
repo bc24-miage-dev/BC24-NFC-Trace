@@ -1,19 +1,19 @@
 from pa1010d import PA1010D
 
-def get_gps_data():
+def get_gps_data(timeout=10):
     gps = PA1010D()
+    start_time = time.time()
 
     while True:
         result = gps.update()
         if result:
-            longitude = f"{gps.longitude: .5f} {gps.lon_dir}"
-            latitude = f"{gps.latitude: .5f} {gps.lat_dir}"
-            altitude = gps.altitude
-            return longitude, latitude, altitude
+            if gps.latitude is not None and gps.longitude is not None and gps.altitude is not None:
+                longitude = f"{gps.longitude: .5f} {gps.lon_dir}"
+                latitude = f"{gps.latitude: .5f} {gps.lat_dir}"
+                altitude = gps.altitude
+                return longitude, latitude, altitude
+        if time.time() - start_time > timeout:
+            break
         time.sleep(1.0)
 
-# Example usage
-longitude, latitude, altitude = get_gps_data()
-print(f"Longitude: {longitude}")
-print(f"Latitude: {latitude}")
-print(f"Altitude: {altitude}")
+    return None, None, None
