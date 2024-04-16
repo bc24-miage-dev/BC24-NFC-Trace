@@ -24,7 +24,7 @@ class BME680Sensor:
 
 def write_to_tag(pn532, uid, data):
     try:
-        block_number = 11
+        block_number = 10
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         print("Chargement d'écriture des données dans le tag NFC...")
 
@@ -32,12 +32,12 @@ def write_to_tag(pn532, uid, data):
         data_bytes = data.ljust(16, b'\0')[:16]
 
         print("Côté écriture : Authentification du bloc...")
-        pn532.mifare_classic_authenticate_block(uid, block_number=11, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
+        pn532.mifare_classic_authenticate_block(uid, block_number=10, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
         print("Côté écriture : Écriture des données dans le bloc...")
-        pn532.mifare_classic_write_block(11, data_bytes)
-        if pn532.mifare_classic_read_block(11) == data_bytes:
-            print('Côté écriture : Écriture réussie sur le bloc %d.' % 11)
+        pn532.mifare_classic_write_block(10, data_bytes)
+        if pn532.mifare_classic_read_block(10) == data_bytes:
+            print('Côté écriture : Écriture réussie sur le bloc %d.' % 10)
             return True
         else:
             print('Côté écriture : Erreur lors de la lecture des données écrites.')
@@ -49,12 +49,12 @@ def write_to_tag(pn532, uid, data):
 def read_from_tag(pn532, uid):
     try:
         print("Côté lecture : Authentification du bloc...")
-        pn532.mifare_classic_authenticate_block(uid, block_number=11, key_number=nfc.MIFARE_CMD_AUTH_A, key=b'\xFF\xFF\xFF\xFF\xFF\xFF')
+        pn532.mifare_classic_authenticate_block(uid, block_number=10, key_number=nfc.MIFARE_CMD_AUTH_A, key=b'\xFF\xFF\xFF\xFF\xFF\xFF')
 
         print("Côté lecture : Lecture des données du bloc...")
-        data_read = pn532.mifare_classic_read_block(11)
+        data_read = pn532.mifare_classic_read_block(10)
 
-        print('Côté lecture : Lecture réussie sur le bloc %d : %s' % (11, data_read))
+        print('Côté lecture : Lecture réussie sur le bloc %d : %s' % (10, data_read))
         return data_read
     except Exception as e:
         print('Erreur lors de la lecture du tag NFC :', e)
@@ -68,25 +68,19 @@ def get_temperature():
     else:
         return "Temperature: n/a"
 
-def main():
-    pn532 = PN532_SPI(debug=False, reset=17, cs=0)
-    ic, ver, rev, support = pn532.get_firmware_version()
-    if not (ic == 0x14 and ver == 0x01 and rev == 0x16):
-        print("Erreur : version du firmware incorrecte")
-        return
+def write_temperature_to_tag(pn532, uid):
+    temperature = get_temperature()
+    if write_to_tag(pn532, uid, temperature):
+        print("Température écrite dans le tag NFC avec succès")
+    else:
+        print("Erreur lors de l'écriture de la température dans le tag NFC")
 
-    print("Attente d'un tag NFC...")
-    while True:
-        uid = pn532.read_passive_target(timeout=0.5)
-        if uid is not None:
-            print("Tag NFC détecté avec l'UID :", uid)
-            temperature = get_temperature()
-            print("Température :", temperature)
-            if write_to_tag(pn532, uid, temperature):
-                print("Données écrites dans le tag NFC avec succès")
-            else:
-                print("Erreur lors de l'écriture des données dans le tag NFC")
-            time.sleep(1)
-
-if __name__ == '__main__':
-    main()
+def read_temperature_from_tag(pn532, uid):
+    data_read = read_from_tag(pn532, uid)
+    if data_read is not None:
+        temperature = data_read.decode("utf-8").strip()
+        print("Température lue depuis le tag NFC :", temperature)
+        return temperature
+    else:
+        print("Erreur lors de la lecture de la température depuis le tag NFC")
+        return None
