@@ -55,25 +55,33 @@ try:
         # Convert UID to hex string
         uid_hex = ':'.join('{:02X}'.format(x) for x in uid)
 
-        # Read data from all blocks
+        # Read data from specific blocks
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         token_id = ""
         temperature = ""
         gps = ""
         date = ""
 
-        for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
+        # Block numbers for specific data
+        block_numbers = {
+            "NFT_tokenID": 10,
+            "temperature": 12,
+            "gps": 13,
+            "date": 14
+        }
+
+        for block_name, block_number in block_numbers.items():
             try:
                 pn532.mifare_classic_authenticate_block(
-                    uid, block_number=10+i, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
-                data = pn532.mifare_classic_read_block(10+i)
-                if i == 0:
+                    uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
+                data = pn532.mifare_classic_read_block(block_number)
+                if block_name == "NFT_tokenID":
                     token_id = data.decode('utf-8').strip('\x00')
-                elif i == 1:
+                elif block_name == "temperature":
                     temperature = data.hex()
-                elif i == 2:
+                elif block_name == "gps":
                     gps = data.decode('utf-8').strip('\x00')
-                elif i == 3:
+                elif block_name == "date":
                     date = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
                 print(e.errmsg)
@@ -113,7 +121,6 @@ try:
         filename = JSON_DIRECTORY + 'data_' + uid_hex.replace(':', '_') + '.json'
         with open(filename, 'w') as f:
             json.dump(tag_data, f, indent=4)
-
 
         # Wait for user to remove card
         while uid is not None:
