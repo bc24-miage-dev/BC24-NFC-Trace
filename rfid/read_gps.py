@@ -25,7 +25,7 @@ class GPS:
                 "vdop": self.gps.data["vdop"],
                 "hdop": self.gps.data["hdop"],
             }
-            return data
+            return data["position"]
         else:
             return None
 

@@ -1,10 +1,14 @@
 import datetime
 import RPi.GPIO as GPIO
-import write_date  # Importer le fichier contenant les fonctions pour écrire la date
-import write_tokenId    # Importer le fichier contenant les fonctions pour écrire l'ID de token NFC
-import write_temperature    # Importer le fichier contenant les fonctions pour écrire la température
+
+# Importer les différents fichiers contenants les différentes fonctions
+import write_date
+import write_tokenId
+#import write_temperature
+#import write_gps
 
 # from read_temperature import BME680Sensor
+# from read_gps import GPS
 from pn532 import PN532_SPI
 
 if __name__ == '__main__':
@@ -30,7 +34,8 @@ if __name__ == '__main__':
                 # Données à écrire dans la carte RFID/NFC
                 data_token = write_tokenId.get_tokenId()
                 data_date = write_date.get_date()
-                data_temperature = write_temperature.get_temperature(bme_sensor.sensor)
+                # data_temperature = write_temperature.get_temperature(bme_sensor.sensor)
+                # data_gps = write_gps.get_gps()
 
                 # Écrire l'ID de token NFC sur la carte RFID/NFC
                 if write_tokenId.write_to_tag(pn532, uid, data_token.encode()):
@@ -45,15 +50,23 @@ if __name__ == '__main__':
                     print("Échec de l'écriture de la date sur la carte RFID/NFC.")
 
                 # Écrire la température sur la carte RFID/NFC
-                if write_temperature.write_to_tag(pn532, uid, data_temperature):
-                    print("Écriture de la température réussie sur la carte RFID/NFC.")
-                else:
-                    print("Échec de l'écriture de la température sur la carte RFID/NFC.")
+                # if write_temperature.write_to_tag(pn532, uid, data_temperature.encode()):
+                #     print("Écriture de la température réussie sur la carte RFID/NFC.")
+                # else:
+                #     print("Échec de l'écriture de la température sur la carte RFID/NFC.")
+
+                # Écrire le gps sur la carte RFID/NFC
+                # if write_gps.write_to_tag(pn532, uid, data_gps.encode()):
+                #     print("Écriture du gps réussie sur la carte RFID/NFC.")
+                # else:
+                #     print("Échec de l'écriture du gps sur la carte RFID/NFC.")
+
 
                 # Lire à nouveau les données écrites pour vérification
                 read_tokenId = write_tokenId.read_from_tag(pn532, uid)
                 read_date = write_date.read_from_tag(pn532, uid)
-                read_temperature = write_temperature.read_from_tag(pn532, uid)
+                # read_temperature = write_temperature.read_from_tag(pn532, uid)
+                # read_gps = write_gps.read_from_tag(pn532, uid)
 
                 if read_tokenId is not None:
                     print("ID de token NFC lu depuis la carte RFID/NFC :", read_tokenId.decode())
@@ -65,10 +78,15 @@ if __name__ == '__main__':
                 else:
                     print("Échec de la lecture de la date depuis la carte RFID/NFC.")
 
-                if read_temperature is not None:
-                    print("Température lue depuis la carte RFID/NFC :", read_temperature)
-                else:
-                    print("Échec de la lecture de la température depuis la carte RFID/NFC.")
+                # if read_temperature is not None:
+                #     print("Température lue depuis la carte RFID/NFC :", read_temperature.decode())
+                # else:
+                #     print("Échec de la lecture de la température depuis la carte RFID/NFC.")
+
+                # if read_gps is not None:
+                #     print("GPS lue depuis la carte RFID/NFC :", read_gps.decode())
+                # else:
+                #     print("Échec de la lecture du GPS depuis la carte RFID/NFC.")
 
                 break
 
