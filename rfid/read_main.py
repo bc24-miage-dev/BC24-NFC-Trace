@@ -6,27 +6,27 @@ import json
 import os
 import sys
 
-# Initialize Pygame
+# Initialiser Pygame
 pygame.init()
 
-# Set up the display
+# Configurer l'affichage
 DISPLAY_WIDTH = 720
 DISPLAY_HEIGHT = 500
 display = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
-pygame.display.set_caption('NFC Tag Reader')
+pygame.display.set_caption('Lecteur de Tags NFC')
 
-# Set up fonts
+# Configurer les polices
 FONT_SIZE = 16
 FONT = pygame.font.SysFont('Arial', FONT_SIZE)
 
-# Initialize PN532
+# Initialiser PN532
 pn532 = PN532_SPI(cs=4, reset=20, debug=False)
 
-# Get firmware version
+# Obtenir la version du firmware
 ic, ver, rev, support = pn532.get_firmware_version()
-print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
+print('PN532 trouvé avec la version du firmware : {0}.{1}'.format(ver, rev))
 
-# Configure PN532 to communicate with MiFare cards
+# Configurer PN532 pour communiquer avec les cartes MiFare
 pn532.SAM_configuration()
 
 # Chemin du répertoire JSON
@@ -36,34 +36,34 @@ JSON_DIRECTORY = "json/"
 if not os.path.exists(JSON_DIRECTORY):
     os.makedirs(JSON_DIRECTORY)
 
-# Main loop
+# Boucle principale
 try:
     running = True
     while running:
-        # Event handling
+        # Gestion des événements
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        # Check if a card is available to read
+        # Vérifier si une carte est disponible à la lecture
         uid = pn532.read_passive_target(timeout=0.5)
 
-        # Try again if no card is available.
+        # Réessayer si aucune carte n'est disponible.
         if uid is None:
             continue
 
-        # Convert UID to hex string
+        # Convertir UID en chaîne hexadécimale
         uid_hex = ':'.join('{:02X}'.format(x) for x in uid)
 
-        # Read data from specific blocks
+        # Lire les données des blocs spécifiques
         key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
         token_id = ""
         temperature = ""
         gps_data = {"longitude": "", "latitude": "", "altitude": ""}
-        default_gps_data = {"longitude": "not found", "latitude": "not found", "altitude": "not found"}
+        default_gps_data = {"longitude": "non trouvé", "latitude": "non trouvé", "altitude": "non trouvé"}
         date = ""
 
-        # Block numbers for specific data
+        # Numéros de bloc pour des données spécifiques
         block_numbers = {
             "NFT_tokenID": 10,
             "temperature": 12,
@@ -94,22 +94,22 @@ try:
                 print(e.errmsg)
                 break
 
-        # Add tag data to list
+        # Ajouter les données du tag à la liste
         tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps_data, 'date': date}
 
-        # Display tag data on screen
+        # Afficher les données du tag à l'écran
         display.fill((255, 255, 255))
-        label = FONT.render('Tag Data (' + uid_hex + '):', True, (0, 0, 0))
+        label = FONT.render('Données du Tag (' + uid_hex + '):', True, (0, 0, 0))
         display.blit(label, (50, 50))
 
-        # Draw table header
+        # Dessiner l'en-tête du tableau
         header_font = pygame.font.SysFont('Arial', FONT_SIZE * 2)
-        header_label = header_font.render('Block', True, (0, 0, 0))
+        header_label = header_font.render('Bloc', True, (0, 0, 0))
         header_rect = header_label.get_rect()
         header_rect.topleft = (50, 100)
         display.blit(header_label, header_rect)
 
-        # Draw table data
+        # Dessiner les données du tableau
         row_height = FONT_SIZE + 5
         col_width = 450
         num_cols = 1
@@ -130,21 +130,21 @@ try:
 
         pygame.display.update()
 
-        # Write tag data to JSON file with UID as filename
+        # Écrire les données du tag dans un fichier JSON avec UID comme nom de fichier
         filename = JSON_DIRECTORY + 'data_' + uid_hex.replace(':', '_') + '.json'
         with open(filename, 'w') as f:
             json.dump(tag_data, f, indent=4)
 
-        # Wait for user to remove card
+        # Attendre que l'utilisateur retire la carte
         while uid is not None:
             uid = pn532.read_passive_target(timeout=0.5)
 
-        # Clear the display
+        # Effacer l'affichage
         display.fill((255, 255, 255))
         pygame.display.update()
 
 except KeyboardInterrupt:
-    print("Exiting program...")
+    print("Programme interrompu...")
     GPIO.cleanup()
     pygame.quit()
     sys.exit(0)
