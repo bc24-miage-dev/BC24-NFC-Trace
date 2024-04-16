@@ -53,6 +53,7 @@ def get_temperature():
 if __name__ == '__main__':
     print('Program is starting...')
     try:
-        loop()
+        # loop()
+        get_temperature()
     except KeyboardInterrupt:
         pass
