@@ -41,10 +41,14 @@ def loop():
         ok_rate = 100.0 * ok_cnt / sum_cnt
         print(f"sumCnt : {sum_cnt}, \t okRate : {ok_rate:.2f}% ")
         if data is not None:
-            position = data["position"]
-            print("Status: 0, \t Timestamp: {}, \t Latitude: {}, \t Longitude: {}, \t Altitude: {}".format(data["timestamp"], position["latitude"], position["longitude"], position["altitude"]))
+            position = data.get("position")
+            if position is not None:
+                print("Status: 0, \t Timestamp: {}, \t Latitude: {}, \t Longitude: {}, \t Altitude: {}".format(data["timestamp"], position["latitude"], position["longitude"], position["altitude"]))
+            else:
+                print("Status: -1, \t Timestamp: n/a, \t Latitude: n/a, \t Longitude: n/a, \t Altitude: n/a")
         else:
             print("Status: -1, \t Timestamp: n/a, \t Latitude: n/a, \t Longitude: n/a, \t Altitude: n/a")
+
         time.sleep(1)
 
 if __name__ == '__main__':
