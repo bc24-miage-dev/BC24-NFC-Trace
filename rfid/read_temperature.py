@@ -43,12 +43,12 @@ def loop():
 if __name__ == '__main__':
     print('Program is starting...')
     try:
-        loop()
+        #loop()
         bme = BME680Sensor()
         temperature = bme.read_temperature()
-        #if temperature is not None:
-        #    print("%.2f" % temperature)
-        #else:
-        #   print("Error reading temperature")
+        if temperature is not None:
+            print("%.2f" % temperature)
+        else:
+            print("Error reading temperature")
     except KeyboardInterrupt:
         pass
