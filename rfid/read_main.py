@@ -69,7 +69,7 @@ try:
             "temperature": 12,
             "gps": 13,
             "date_creation": 14,
-            "date_last_modified": 16
+            "date_derniere_modification": 16
         }
 
 
@@ -90,7 +90,7 @@ try:
                         gps_data["altitude"] = gps_data_list[2]
                     else:
                         gps_data = default_gps_data
-                elif block_name == "date":
+                elif block_name == "date_creation":
                     date = data.decode('utf-8').strip('\x00')
                 elif block_name == "date_derniere_modification":
                     date_last_modified = data.decode('utf-8').strip('\x00')
@@ -117,12 +117,12 @@ try:
         row_height = FONT_SIZE + 5
         col_width = 450
         num_cols = 1
-        for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date"]):
+        for i, block_name in enumerate(["NFT_tokenID", "temperature", "gps", "date_creation", "date_derniere_modification"]):
             if block_name == "gps":
                 data_label = block_name + ": {"
                 data_label += "longitude: " + gps_data["longitude"] + ", "
                 data_label += "latitude: " + gps_data["latitude"] + ", "
-                data_label += "altitude: " + gps_data["altitude"] + "}"
+                data_label += "altitude: " + gps_data["altitude"] + "}"  
             else:
                 data_label = block_name + ": " + tag_data[block_name]
             label = FONT.render(data_label, True, (0, 0, 0))
