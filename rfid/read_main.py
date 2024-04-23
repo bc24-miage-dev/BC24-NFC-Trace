@@ -68,8 +68,10 @@ try:
             "NFT_tokenID": 10,
             "temperature": 12,
             "gps": 13,
-            "date": 14
+            "date_creation": 14,
+            "date_last_modified": 16
         }
+
 
         for block_name, block_number in block_numbers.items():
             try:
@@ -90,12 +92,14 @@ try:
                         gps_data = default_gps_data
                 elif block_name == "date":
                     date = data.decode('utf-8').strip('\x00')
+                elif block_name == "date_derniere_modification":
+                    date_last_modified = data.decode('utf-8').strip('\x00')
             except nfc.PN532Error as e:
                 print(e.errmsg)
                 break
 
         # Ajouter les données du tag à la liste
-        tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps_data, 'date': date}
+        tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps_data, 'date_creation': date, 'date_derniere_modification': date_last_modified}
 
         # Afficher les données du tag à l'écran
         display.fill((255, 255, 255))
