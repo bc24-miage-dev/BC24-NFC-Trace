@@ -18,7 +18,7 @@ def write_to_tag(pn532, uid, data_date):
         data_bytes_date = data_date.ljust(16, b'\0')[:16]
 
         print("Côté écriture : Authentification du bloc...")
-        pn532.mifare_classic_authenticate_block(uid, block_number=16, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
+        pn532.mifare_classic_authenticate_block(uid, block_number=14, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
         # Lecture du bloc pour vérifier s'il est vide
         current_data = pn532.mifare_classic_read_block(14)
@@ -33,6 +33,9 @@ def write_to_tag(pn532, uid, data_date):
             else:
                 print('Côté écriture : Erreur lors de la lecture des données écrites dans le bloc 14.')
                 return False
+        
+        print("Côté écriture : Authentification du bloc...")
+        pn532.mifare_classic_authenticate_block(uid, block_number=16, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
         print("Côté écriture : Écriture des données dans le bloc 16")
         pn532.mifare_classic_write_block(16, data_bytes_date)
