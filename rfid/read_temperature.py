@@ -21,6 +21,7 @@ class BME680Sensor:
             return self.sensor.data.temperature
         else:
             return None
+        
 
 def loop():
     bme = BME680Sensor()
