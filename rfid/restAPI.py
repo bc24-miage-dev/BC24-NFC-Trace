@@ -1,15 +1,22 @@
-from flask import *
+from flask import Flask, jsonify, request, Response, copy_current_request_context
 import json, os, logging, sys
 import pn532.pn532 as nfc
 from pn532 import *
 from write_main import write_main
-from read_main import reader
-from threading import Thread
+import read_main
 import threading
 
 app = Flask(__name__)
 
-isRunning = True
+class Response(Response):
+    def call_on_close(self, func):
+        self.call_on_close_func = func
+        return self
+
+    def close(self):
+        if hasattr(self, 'call_on_close_func'):
+            self.call_on_close_func()
+        super().close()
 
 def init_nfc_module():
     # Initialisation du module NFC PN532
@@ -45,8 +52,6 @@ def read_json():
     # Read all files in given path JSON_DIRECTORY
     logging.warning("Fetching all files in " + JSON_DIRECTORY + " ...")
 
-    thread = threading.Thread(target=reader, args=(isRunning,))
-
     try:
         json_file = os.listdir(JSON_DIRECTORY)
 
@@ -54,11 +59,11 @@ def read_json():
         readerFile = open(JSON_DIRECTORY + json_file[0])
         # Store JSON file content in dictionnary
         data = json.load(readerFile)
-
-        thread.start()
+        print(data)
+        
         return jsonify({'result' : data}), 200
     except:
-        thread.start()
+        
         return jsonify({"Message" : "An error has occured"}), 404    
 
 
@@ -68,51 +73,78 @@ and write on NFC tag
 """
 @app.route('/write', methods=['POST'])
 def write():
-    # Check if NFC Tag is present
-    try:
-        init = init_nfc_module()
-        uid = init.get("uid")
-        pn532 = init.get("pn532")
-    # Returns error msg if no NFC tag is present
-    except:
-        return jsonify({"success": False, "error": "Request canceled : no NFC tag"}), 404
-    
-    # Check if body is present in request
-    data = request.get_json()
+    for thread in threading.enumerate(): 
+        print(thread.name)
 
-    thread = threading.Thread(target=reader, args=(isRunning,))
+    try:
+        read_main.stop()
+    except:
+        pass
+    
+    # Check if NFC Tag is present
+    init = init_nfc_module()
+    uid = init.get("uid")
+    pn532 = init.get("pn532")
+    
+    # get data in request
+    data = request.get_json()
 
     # Check if all mandatory data is given (check keys)
     if ("NFT_tokenID" in data):
-        try:
-            # Call method write_main() from write_main.py to write on NFC tag 
-            write_main(pn532, uid, str(data.get("NFT_tokenID")))
-            thread.start()
-            return jsonify({"success": True, "success": "data written on NFC tag"}), 200
-        except:
-            thread.start()
-            return jsonify({"success": False, "error": "An error has occured"}), 500
-    else:
-        thread.start()
-        return jsonify({"success": False, "error": "Request not valid : JSON data not valid"}), 400
+        # Call method write_main() from write_main.py to write on NFC tag 
+        # Try again until write_main() returns True
+        while(write_main(pn532, uid, str(data.get("NFT_tokenID"))) != True):
+            hasSucceed = write_main(pn532, uid, str(data.get("NFT_tokenID")))
+            if (hasSucceed):
+                break
+        
+        response = Response()
+        json_data = {"success": True, "message": "Data saved !"}
+        json_response = jsonify(json_data)
+        response = Response(response=json_response.response,
+                        status=202,
+                        content_type="application/json")
 
+        @response.call_on_close
+        @copy_current_request_context
+        def restart():
+            print("restarting reader...")
+            startReader()
+
+        return response
+    else:
+        response = Response()
+        json_data = {"success": False, "error": "An error has occured !"}
+        json_response = jsonify(json_data)
+        response = Response(response=json_response.response,
+                        status=500,
+                        content_type="application/json")
+
+        @response.call_on_close
+        @copy_current_request_context
+        def restart():
+            print("restarting reader...")
+            startReader()
+
+        return response
+
+
+
+@app.route('/stopReader', methods=['GET'])
+def stopReader():
+    try:
+        read_main.stop()
+        return jsonify({'success' : True, "message": "Reader has stopped"}), 200
+    except:
+        return jsonify({'success' : False, "error": "Reader cannot be stopped"}), 500
+    
 @app.route('/startReader', methods=['GET'])
 def startReader():
     try:
-        isRunning = True
-        reader(isRunning)
+        read_main.start()
+        return jsonify({'success' : True, "message": "Reader has started"}), 200
     except:
-        return jsonify({"success": False, "error": "An error has occured while trying to start reader"}), 500
-    
-@app.before_request
-def exit():
-    try:
-        print(threading.enumerate())
-        if (isRunning == True):
-            isRunning = False
-            reader(isRunning)
-    except:
-        return
+        return jsonify({'success' : False, "error": "Reader cannot start"}), 500
     
 if __name__ == '__main__':
     app.run(port=5000)
