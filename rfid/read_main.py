@@ -35,7 +35,8 @@ class Reader(threading.Thread):
 
         # Boucle principale
         try:
-            while self._stop_event:
+            counter = 0
+            while self._stop_event and counter < 5:
                 print("running...")
 
                 # Vérifier si une carte est disponible à la lecture
@@ -43,7 +44,9 @@ class Reader(threading.Thread):
 
                 # Réessayer si aucune carte n'est disponible.
                 if uid is None:
-                    print("No NFC tag")
+                    print("No NFC tag")   
+                    time.sleep(5)
+                    counter += 1
                     continue
 
                 # Convertir UID en chaîne hexadécimale
@@ -113,8 +116,9 @@ class Reader(threading.Thread):
                     print("Erreur écriture des données.")
 
                 time.sleep(5)
+                counter += 1
             print("Reader à l'arrêt")
-            return {"Message": "Reader à l'arrêt"}
+            return {"Message": "Reader à l'arrêt sans carte trouvée."}
 
         except KeyboardInterrupt:
             print("Programme interrompu...")
