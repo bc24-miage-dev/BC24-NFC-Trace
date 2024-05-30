@@ -141,10 +141,11 @@ def stopReader():
 @app.route('/startReader', methods=['GET'])
 def startReader():
     try:
-        read_main.start()
+        result = read_main.start()
+        return jsonify(result), 200
         return jsonify({'success' : True, "message": "Reader has started"}), 200
     except:
-        return jsonify({'success' : False, "error": "Reader cannot start"}), 500
+        return jsonify({'success' : False, "error": "Reader cannot start"}), 500      
     
 if __name__ == '__main__':
     app.run(port=5000)

@@ -86,6 +86,7 @@ class Reader(threading.Thread):
                     # Ajouter les données du tag à la liste
                     tag_data = {'uid': uid_hex, 'NFT_tokenID': token_id, 'temperature': temperature, 'gps': gps_data, 'date_creation': date, 'date_derniere_modification': date_last_modified}
                     print(tag_data)
+                    return tag_data
 
                     # Supprimer tous les fichiers présents dans le dossier /json
                     json_file = os.listdir(JSON_DIRECTORY)
@@ -113,7 +114,7 @@ class Reader(threading.Thread):
 
                 time.sleep(5)
             print("Reader à l'arrêt")
-            return
+            return {"Message": "Reader à l'arrêt"}
 
         except KeyboardInterrupt:
             print("Programme interrompu...")
@@ -127,7 +128,8 @@ class Reader(threading.Thread):
 def start():
     global thread
     thread = Reader()
-    thread.run()
+    result = thread.run()
+    return result
     time.sleep(3)
 
 def stop():
