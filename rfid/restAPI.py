@@ -93,10 +93,9 @@ def write():
     if ("NFT_tokenID" in data):
         # Call method write_main() from write_main.py to write on NFC tag 
         # Try again until write_main() returns True
-        while(write_main(pn532, uid, str(data.get("NFT_tokenID"))) != True):
-            hasSucceed = write_main(pn532, uid, str(data.get("NFT_tokenID")))
-            if (hasSucceed):
-                break
+        hasSucceeded = False
+        while not hasSucceeded:
+            hasSucceeded = write_main(pn532, uid, str(data.get("NFT_tokenID")))
         
         response = Response()
         json_data = {"success": True, "message": "Data saved !"}
@@ -105,26 +104,26 @@ def write():
                         status=202,
                         content_type="application/json")
 
-        @response.call_on_close
+        """ @response.call_on_close
         @copy_current_request_context
         def restart():
             print("restarting reader...")
-            startReader()
+            startReader() """
 
         return response
     else:
         response = Response()
-        json_data = {"success": False, "error": "An error has occured !"}
+        json_data = {"success": False, "error": "Make sure you have a NFT_tokenID in your request json!"}
         json_response = jsonify(json_data)
         response = Response(response=json_response.response,
-                        status=500,
+                        status=400,
                         content_type="application/json")
 
-        @response.call_on_close
+        """  @response.call_on_close
         @copy_current_request_context
         def restart():
             print("restarting reader...")
-            startReader()
+            startReader() """
 
         return response
 
