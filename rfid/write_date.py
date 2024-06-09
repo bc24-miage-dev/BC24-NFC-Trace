@@ -1,13 +1,9 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 import datetime
+import utils
 
 from pn532 import PN532_SPI
-
-# Fonction pour déterminer si un bloc est vide
-def is_block_empty(data):
-    # Si le bloc contient uniquement des zéros ou des valeurs nulles, il est considéré comme vide
-    return all(x == 0 or x == b'\x00' for x in data)
 
 def write_to_tag(pn532, uid, data_date):
     try:
@@ -17,14 +13,15 @@ def write_to_tag(pn532, uid, data_date):
         # Assurer que les données font exactement 16 octets
         data_bytes_date = data_date.ljust(16, b'\0')[:16]
 
+        print("Ecriture de la date de création...")
         print("Côté écriture : Authentification du bloc...")
         pn532.mifare_classic_authenticate_block(uid, block_number=14, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
         # Lecture du bloc pour vérifier s'il est vide
         current_data = pn532.mifare_classic_read_block(14)
 
-        if is_block_empty(current_data):
-            print("Le bloc 16 est vide, écriture de la date...")
+        if utils.is_block_empty(current_data):
+            print("Le bloc 14 est vide, écriture de la date...")
             pn532.mifare_classic_write_block(14, data_bytes_date)
             
             if pn532.mifare_classic_read_block(14) == data_bytes_date:
@@ -34,6 +31,8 @@ def write_to_tag(pn532, uid, data_date):
                 print('Côté écriture : Erreur lors de la lecture des données écrites dans le bloc 14.')
                 return False
         
+        print(" ")
+        print("Mise à jour de la date de dernière modification...")
         print("Côté écriture : Authentification du bloc...")
         pn532.mifare_classic_authenticate_block(uid, block_number=16, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
@@ -66,4 +65,5 @@ def read_from_tag(pn532, uid):
 
 def get_date():
     write_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    print("Date : " + write_date)
     return write_date

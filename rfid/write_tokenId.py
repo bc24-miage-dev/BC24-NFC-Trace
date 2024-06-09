@@ -39,7 +39,3 @@ def read_from_tag(pn532, uid):
     except Exception as e:
         print('Erreur lors de la lecture du tag NFC :', e)
         return None
-
-def get_tokenId():
-    write_token = input("Entrez les données à écrire dans le tag NFC (16 octets) : NFT_tokenID : ")
-    return write_token

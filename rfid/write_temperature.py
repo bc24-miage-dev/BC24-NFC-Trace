@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 import bme680
+import utils
 
 from pn532 import PN532_SPI
 from read_temperature import BME680Sensor
@@ -16,15 +17,21 @@ def write_to_tag(pn532, uid, data_temperature):
         print("Côté écriture : Authentification du bloc...")
         pn532.mifare_classic_authenticate_block(uid, block_number=12, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
 
-        print("Côté écriture : Écriture des données dans le bloc...")
-        pn532.mifare_classic_write_block(12, data_bytes_temperature)
-
-        if pn532.mifare_classic_read_block(12) == data_bytes_temperature:
-            print('Côté écriture : Écriture réussie sur le bloc 12.')
+        # Si aucune donnée n'est présente, alors écriture de la température
+        current_data = pn532.mifare_classic_read_block(12)
+        if (utils.is_block_empty(current_data)): 
+            print("Côté écriture : Écriture des données dans le bloc...")
+            pn532.mifare_classic_write_block(12, None)
             return True
-        else:
-            print('Côté écriture : Erreur lors de la lecture des données écrites.')
-            return False
+            """
+            if pn532.mifare_classic_read_block(12) == data_bytes_temperature:
+                print('Côté écriture : Écriture réussie sur le bloc 12.')
+                return True
+            else:
+                print('Côté écriture : Erreur lors de la lecture des données écrites.')
+                return False
+            """
+
     except Exception as e:
         print('Côté écriture : Erreur lors de l\'écriture dans le tag NFC :', e)
         return False
@@ -47,6 +54,8 @@ def get_temperature():
     bme = BME680Sensor()
     temperature = bme.read_temperature()
     if temperature is not None:
+        print("Temperature read")
         return "%.2f" % temperature
     else:
+        print("No temperature read")
         return None
