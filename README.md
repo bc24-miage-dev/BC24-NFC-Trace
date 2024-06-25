@@ -2,7 +2,7 @@
 
 ## Presentation :
 This project consists of two parts:
-1. The python module for managing the hardware components, it allow us to trace all resources with NFC tag
+1. The python module for managing the hardware components below, it allow us to trace in the real world all physics resources using NFC tags
 2. The API to serve our [webapp](https://github.com/bc24-miage-dev/BC24-WEBAPP) and allow the communication with our material below
 
 ## Hardware components :
