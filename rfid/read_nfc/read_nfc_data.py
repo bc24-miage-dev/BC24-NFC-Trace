@@ -19,7 +19,7 @@ FONT_SIZE = 16
 FONT = pygame.font.SysFont('Arial', FONT_SIZE)
 
 # Initialize PN532
-pn532 = PN532_SPI(cs=4, reset=20, debug=False)
+pn532 = PN532_I2C(cs=4, reset=20, debug=False)
 
 # Get firmware version
 ic, ver, rev, support = pn532.get_firmware_version()

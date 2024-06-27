@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
-from pn532 import PN532_SPI
+from pn532 import PN532_I2C
 
 def write_to_tag(pn532, uid, data_token):
     try:

@@ -25,8 +25,8 @@ def handle_button_pressed(dht):
         print("Humidity : %.2f, \t Temperature : %.2f \n"%(dht.humidity,dht.temperature))
 
 
-        pn532 = PN532_SPI(debug=False, reset=20, cs=4)
-        #pn532 = PN532_I2C(debug=False, reset=20, req=16)
+        #pn532 = PN532_SPI(debug=False, reset=20, cs=4)
+        pn532 = PN532_I2C(debug=False, reset=20, req=16)
         #pn532 = PN532_UART(debug=False, reset=20)
 
         ic, ver, rev, support = pn532.get_firmware_version()

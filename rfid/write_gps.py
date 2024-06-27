@@ -3,7 +3,7 @@ import pn532.pn532 as nfc
 import bme680
 import utils
 
-from pn532 import PN532_SPI
+from pn532 import PN532_I2C
 from read_gps import GPS
 
 def write_to_tag(pn532, uid, data_gps):

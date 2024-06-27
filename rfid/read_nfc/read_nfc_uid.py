@@ -40,13 +40,13 @@ def read_nfc_tag():
         else:
             print("Impossible de lire le contenu du tag NFC Mifare.")
             return None
-    except PN532_SPI as e:  # Utiliser PN532_SPI ici
+    except PN532_I2C as e:  # Utiliser PN532_SPI ici
         print("Erreur lors de la lecture du tag NFC Mifare :", e)
         return None
 
 if __name__ == '__main__':
     try:
-        pn532 = PN532_SPI(debug=False, reset=20, cs=4)
+        pn532 = PN532_I2C(debug=False, reset=20, cs=4)
         ic, ver, rev, support = pn532.get_firmware_version()
         print('Module NFC PN532 NFC HAT trouvé : {0}.{1}'.format(ver, rev))
         pn532.SAM_configuration()
