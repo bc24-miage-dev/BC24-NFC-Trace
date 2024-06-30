@@ -16,8 +16,8 @@ class Reader(threading.Thread):
 
     def run(self):
         # Initial-iser PN532
-        #pn532 = PN532_SPI(cs=4, reset=20, debug=False)
-        pn532 = PN532_I2C(debug=False, reset=20, req=16)
+        pn532 = PN532_SPI(cs=4, reset=20, debug=False)
+        #pn532 = PN532_I2C(debug=False, reset=20, req=16)
 
         # Obtenir la version du firmware
         ic, ver, rev, support = pn532.get_firmware_version()

@@ -20,8 +20,8 @@ class Response(Response):
 
 def init_nfc_module():
     # Initialisation du module NFC PN532
-    # pn532 = PN532_SPI(debug=False, reset=20, cs=4)
-    pn532 = PN532_I2C(debug=False, reset=20, req=16)
+    pn532 = PN532_SPI(debug=False, reset=20, cs=4)
+    #pn532 = PN532_I2C(debug=False, reset=20, req=16)
     ic, ver, rev, support = pn532.get_firmware_version()
     print('Module NFC PN532 trouvé avec la version de firmware : {0}.{1}'.format(ver, rev))
     # Configuration pour communiquer avec les cartes MiFare
