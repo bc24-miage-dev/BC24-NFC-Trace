@@ -65,4 +65,4 @@ def get_gps():
         return str(data)
     else:
         print("GPS not read")
-        return None
+        return "N/A"

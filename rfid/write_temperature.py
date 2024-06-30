@@ -58,4 +58,4 @@ def get_temperature():
         return "%.2f" % temperature
     else:
         print("No temperature read")
-        return None
+        return "N/A"
