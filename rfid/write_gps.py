@@ -62,7 +62,7 @@ def get_gps():
     if data is not None:
         print("GPS read")
         print("??????")
-        return str(data)
+        return str(data["position"])
     else:
         print("GPS not read")
         return "N/A"
