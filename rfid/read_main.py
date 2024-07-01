@@ -55,8 +55,8 @@ class Reader(threading.Thread):
                 # Lire les données des blocs spécifiques
                 key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
                 token_id = ""
-                temperature = get_temperature()
-                gps_data = get_gps()
+                temperature = "test" #get_temperature()
+                gps_data = "test" #get_gps()
                 if (gps_data == None):
                     gps_data = {"longitude": "non trouve", "latitude": "non trouve", "altitude": "non trouve"}
                 date = ""

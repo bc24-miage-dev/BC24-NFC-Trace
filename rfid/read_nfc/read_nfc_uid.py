@@ -46,7 +46,7 @@ def read_nfc_tag():
 
 if __name__ == '__main__':
     try:
-        pn532 = PN532_I2C(debug=False, reset=20, cs=16)
+        pn532 = PN532_I2C(debug=False, reset=20, cs=4)
         ic, ver, rev, support = pn532.get_firmware_version()
         print('Module NFC PN532 NFC HAT trouvé : {0}.{1}'.format(ver, rev))
         pn532.SAM_configuration()
