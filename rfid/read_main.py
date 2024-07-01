@@ -56,7 +56,7 @@ class Reader(threading.Thread):
                 key_a = b'\xFF\xFF\xFF\xFF\xFF\xFF'
                 token_id = ""
                 temperature = get_temperature()
-                gps_data = "longitude : 2.3572, latitude : 48.82, altitude : 35" #get_gps()
+                gps_data = get_gps() #"longitude : 2.3572, latitude : 48.82, altitude : 35"
                 if (gps_data == None):
                     gps_data = {"longitude": "non trouve", "latitude": "non trouve", "altitude": "non trouve"}
                 date = ""
